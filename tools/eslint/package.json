@@ -10,7 +10,6 @@
   "engines": {
     "node": "18"
   },
-  "type": "module",
   "license": "MIT",
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.0",
