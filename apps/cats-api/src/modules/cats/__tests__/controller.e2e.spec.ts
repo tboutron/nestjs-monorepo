@@ -10,6 +10,8 @@ import { CatsEntity } from '../entity';
 import { CatsRepository } from '../repository';
 import { Cats } from '../schema';
 
+const getMockCats = (): CatsEntity => ({ id: 'mockId', name: 'mockName', age: 42, breed: 'mockBreed' });
+
 describe('CatsController (e2e)', () => {
   let app: INestApplication;
 
@@ -26,9 +28,16 @@ describe('CatsController (e2e)', () => {
         },
         {
           provide: getModelToken(Cats.name),
-          useValue: jest.fn(() => ({
-            save: () => true,
-          })),
+          useValue: {
+            new: jest.fn(getMockCats),
+            constructor: jest.fn(getMockCats),
+            find: jest.fn(),
+            findOne: jest.fn(getMockCats),
+            update: jest.fn(),
+            create: jest.fn(getMockCats),
+            remove: jest.fn(),
+            exec: jest.fn(),
+          },
         },
       ],
       imports: [GlobalModule],

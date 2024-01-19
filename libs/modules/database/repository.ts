@@ -2,32 +2,29 @@ import { HttpStatus } from '@nestjs/common';
 import { ApiException } from 'libs/utils';
 import mongodb from 'mongodb';
 import {
+  Document,
   FilterQuery,
   Model,
   MongooseQueryOptions,
   QueryOptions,
-  SaveOptions,
   UpdateQuery,
   UpdateWithAggregationPipeline,
 } from 'mongoose';
-import { Document } from 'mongoose';
 
 import { IRepository } from './adapter';
 import { CreatedModel, RemovedModel, UpdatedModel } from './types';
 
 export class Repository<T extends Document> implements IRepository<T> {
-  constructor(private readonly model: Model<T>) {}
+  constructor(protected readonly model: Model<T>) {}
 
   async isConnected(): Promise<void> {
     if (this.model.db.readyState !== 1)
       throw new ApiException(`db ${this.model.db.name} disconnected`, HttpStatus.INTERNAL_SERVER_ERROR, 'Database');
   }
 
-  async create(document: object, saveOptions?: SaveOptions): Promise<CreatedModel> {
-    const createdEntity = new this.model(document);
-    const savedResult = await createdEntity.save(saveOptions);
-
-    return { id: savedResult.id, created: !!savedResult.id };
+  async create(document: Partial<T>): Promise<CreatedModel<T>> {
+    const createdEntity = await this.model.create(document);
+    return { id: createdEntity.id, created: !!createdEntity.id, doc: createdEntity };
   }
 
   async find(filter: FilterQuery<T>, options?: QueryOptions): Promise<T[]> {

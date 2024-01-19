@@ -7,10 +7,6 @@ import { AuthAPIEnvironment, CatsAPIEnvironment } from './enum';
 
 @Injectable()
 export class SecretsService extends ConfigService implements ISecretsService {
-  constructor() {
-    super();
-  }
-
   ELK_URL = this.get('ELK_URL');
 
   MONGO_EXPRESS_URL = this.get('MONGO_EXPRESS_URL');

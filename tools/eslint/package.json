@@ -2,7 +2,7 @@
   "name": "@tools/eslint",
   "version": "v0.0.22",
   "description": "monorepo eslint config",
-  "main": ".eslintrc.json",
+  "main": ".eslintrc.js",
   "author": {
     "name": "Mike Lima",
     "email": "mike.rodrigues.lima@gmail.com"

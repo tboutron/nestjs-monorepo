@@ -1,12 +1,14 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ITokenService } from 'libs/modules/auth/token/adapter';
+import { Token } from 'libs/modules/auth/token/types';
 
-import { UserEntity } from '../user/entity';
 import { ILoginService } from './adapter';
+import { LoginPayload } from './payload/login.payload';
+import { RegisterPayload } from './payload/register.payload';
 import { SwagggerResponse } from './swagger';
 
-@Controller('login')
+@Controller('auth')
 @ApiTags('login')
 export class LoginController {
   constructor(
@@ -14,12 +16,22 @@ export class LoginController {
     private readonly tokenService: ITokenService,
   ) {}
 
-  @Post()
+  @Post('register')
+  @HttpCode(200)
+  @ApiResponse(SwagggerResponse.register[201])
+  @ApiResponse(SwagggerResponse.register[400])
+  @ApiResponse(SwagggerResponse.register[401])
+  async register(@Body() payload: RegisterPayload): Promise<Token> {
+    const user = await this.loginService.register(payload);
+    return this.tokenService.sign({ userId: user.id });
+  }
+
+  @Post('login')
   @HttpCode(200)
   @ApiResponse(SwagggerResponse.login[200])
   @ApiResponse(SwagggerResponse.login[412])
-  async login(@Body() entity: UserEntity): Promise<unknown> {
-    const user = await this.loginService.login(entity);
+  async login(@Body() payload: LoginPayload): Promise<Token> {
+    const user = await this.loginService.login(payload);
     return this.tokenService.sign({ userId: user.id });
   }
 }

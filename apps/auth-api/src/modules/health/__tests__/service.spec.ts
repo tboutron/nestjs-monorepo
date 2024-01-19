@@ -3,6 +3,7 @@ import { ILoggerService } from 'libs/modules/global/logger/adapter';
 
 import { name, version } from '../../../../package.json';
 import { IUserRepository } from '../../user/adapter';
+import { IUserTokensRepository } from '../../userTokens/adapter';
 import { IHealthService } from '../adapter';
 import { HealthService } from '../service';
 
@@ -18,6 +19,7 @@ describe('HealthService', () => {
           useFactory: () =>
             new HealthService(
               { isConnected: jest.fn() } as unknown as IUserRepository,
+              { isConnected: jest.fn() } as unknown as IUserTokensRepository,
               { info: jest.fn() } as unknown as ILoggerService,
             ),
         },

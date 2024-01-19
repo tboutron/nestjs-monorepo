@@ -2,12 +2,13 @@ import { Module } from '@nestjs/common';
 import { TokenModule } from 'libs/modules/auth/token/module';
 
 import { UserModule } from '../user/module';
+import { UserTokensModule } from '../userTokens/module';
 import { ILoginService } from './adapter';
 import { LoginController } from './controller';
 import { LoginService } from './service';
 
 @Module({
-  imports: [TokenModule, UserModule],
+  imports: [TokenModule, UserModule, UserTokensModule],
   controllers: [LoginController],
   providers: [
     {

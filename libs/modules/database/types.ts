@@ -21,7 +21,8 @@ export type RemovedModel = {
   deleted: boolean;
 };
 
-export type CreatedModel = {
+export type CreatedModel<T> = {
   id: string;
   created: boolean;
+  doc: T;
 };

@@ -2,4 +2,4 @@
 jest.config.js
 node_modules/
 tests/
-.eslintrc.save.js
+.eslintrc.js

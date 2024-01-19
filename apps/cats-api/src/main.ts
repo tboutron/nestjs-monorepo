@@ -1,5 +1,6 @@
 import { HttpStatus, RequestMethod, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { description, name, version } from 'apps/cats-api/package.json';
 import { bold } from 'colorette';
@@ -14,10 +15,11 @@ import { TracingInterceptor } from 'libs/utils/interceptors/logger/http-tracing.
 import { MainModule } from './modules/module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(MainModule, {
+  const app = await NestFactory.create<NestExpressApplication>(MainModule, {
     bufferLogs: true,
     cors: true,
   });
+  app.disable('x-powered-by');
 
   app.useGlobalPipes(
     new ValidationPipe({

@@ -1,10 +1,11 @@
+import { CatsEntity } from 'apps/cats-api/src/modules/cats/entity';
 import { CreatedModel } from 'libs/modules';
 import { Swagger } from 'libs/utils/documentation/swagger';
 
 export const SwagggerResponse = {
   save: {
     201: Swagger.defaultResponseJSON({
-      json: { id: '<id>', created: true } as CreatedModel,
+      json: { id: '<id>', created: true } as CreatedModel<CatsEntity>,
       status: 201,
       description: 'save successfully',
     }),

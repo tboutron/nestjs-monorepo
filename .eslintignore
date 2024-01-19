@@ -1,3 +1,5 @@
+.eslintrc.js
+
 ### VisualStudioCode template
 .vscode/*
 !.vscode/settings.json
