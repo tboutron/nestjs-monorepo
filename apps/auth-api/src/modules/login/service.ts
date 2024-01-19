@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { LoginPayload } from 'apps/auth-api/src/modules/login/payload/login.payload';
 import { RegisterPayload } from 'apps/auth-api/src/modules/login/payload/register.payload';
+import { UserTokenEntity } from 'apps/auth-api/src/modules/userTokens/entity';
 import { TokenTypeEnum } from 'apps/auth-api/src/modules/userTokens/schema';
 import { compare, hash } from 'bcrypt';
 import { ApiException } from 'libs/utils';
@@ -9,7 +10,6 @@ import { IUserRepository } from '../user/adapter';
 import { UserEntity } from '../user/entity';
 import { IUserTokensRepository } from '../userTokens/adapter';
 import { ILoginService } from './adapter';
-import { UserTokenEntity } from 'apps/auth-api/src/modules/userTokens/entity';
 
 @Injectable()
 export class LoginService implements ILoginService {

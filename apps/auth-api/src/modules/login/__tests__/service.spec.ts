@@ -1,12 +1,12 @@
 import { Test } from '@nestjs/testing';
 import { LoginPayload } from 'apps/auth-api/src/modules/login/payload/login.payload';
 import { IUserTokensRepository } from 'apps/auth-api/src/modules/userTokens/adapter';
+import { UserTokenEntity } from 'apps/auth-api/src/modules/userTokens/entity';
 import { TokenTypeEnum } from 'apps/auth-api/src/modules/userTokens/schema';
 
 import { IUserRepository } from '../../user/adapter';
 import { ILoginService } from '../adapter';
 import { LoginService } from '../service';
-import { UserTokenEntity } from 'apps/auth-api/src/modules/userTokens/entity';
 
 describe('LoginService', () => {
   let loginService: ILoginService;

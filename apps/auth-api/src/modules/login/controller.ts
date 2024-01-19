@@ -1,5 +1,6 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UserTokenEntity } from 'apps/auth-api/src/modules/userTokens/entity';
 import { ITokenService } from 'libs/modules/auth/token/adapter';
 import { Token } from 'libs/modules/auth/token/types';
 
@@ -7,7 +8,6 @@ import { ILoginService } from './adapter';
 import { LoginPayload } from './payload/login.payload';
 import { RegisterPayload } from './payload/register.payload';
 import { SwagggerResponse } from './swagger';
-import { UserTokenEntity } from 'apps/auth-api/src/modules/userTokens/entity';
 
 @Controller('auth')
 @ApiTags('login')
