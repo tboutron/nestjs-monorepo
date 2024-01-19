@@ -7,13 +7,16 @@ import { PinoRequestConverter } from 'convert-pino-request-to-curl';
 import { ApiException } from 'libs/utils';
 import { DateTime } from 'luxon';
 import { LevelWithSilent, Logger, multistream, pino } from 'pino';
-import * as pinoElastic from 'pino-elasticsearch';
+// import pinoElastic from 'pino-elasticsearch';
 import { HttpLogger, Options, pinoHttp } from 'pino-http';
 import pinoPretty from 'pino-pretty';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ILoggerService } from './adapter';
 import { ErrorType, MessageType } from './type';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires,unicorn/prefer-module
+const pinoElastic = require('pino-elasticsearch');
 
 @Injectable({ scope: Scope.REQUEST })
 export class LoggerService implements ILoggerService {
@@ -26,17 +29,16 @@ export class LoggerService implements ILoggerService {
 
     this.streamToElastic = pinoElastic({
       index,
-      consistency: 'one',
       node: this.elkUrl,
-      'es-version': 7,
-      'flush-bytes': 1000,
+      esVersion: 7,
+      flushBytes: 1000,
     });
   }
 
   connect<T = LevelWithSilent>(logLevel: T): void {
     const pinoLogger = pino(
       {
-        useLevelLabels: true,
+        // useLevelLabels: true,
         level: [logLevel, 'trace'].find(Boolean).toString(),
       },
       multistream([

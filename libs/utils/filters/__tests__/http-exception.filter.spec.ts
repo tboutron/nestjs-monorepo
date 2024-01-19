@@ -53,7 +53,7 @@ describe('AppExceptionFilter', () => {
   });
 
   test('should catch successfully with unknown status', () => {
-    const error = new ApiException('Error', 1000);
+    const error = new ApiException('Error', 100);
 
     error.statusCode = undefined;
     error.context = undefined;

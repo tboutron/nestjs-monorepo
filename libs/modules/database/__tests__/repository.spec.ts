@@ -101,7 +101,7 @@ describe('Repository', () => {
   describe('remove', () => {
     test('should remove successfully', async () => {
       const repository = buildMock({
-        remove: () => ({
+        deleteMany: () => ({
           deletedCount: 1,
         }),
       });
@@ -111,7 +111,7 @@ describe('Repository', () => {
 
     test('should remove unsuccessfully', async () => {
       const repository = buildMock({
-        remove: () => ({
+        deleteMany: () => ({
           deletedCount: 0,
         }),
       });

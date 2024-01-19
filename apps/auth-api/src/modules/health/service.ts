@@ -7,7 +7,10 @@ import { IHealthService } from './adapter';
 
 @Injectable()
 export class HealthService implements IHealthService {
-  constructor(private readonly userRepository: IUserRepository, private readonly loggerService: ILoggerService) {}
+  constructor(
+    private readonly userRepository: IUserRepository,
+    private readonly loggerService: ILoggerService,
+  ) {}
 
   async getText(): Promise<string> {
     const appName = `${name}-${version} UP!!`;

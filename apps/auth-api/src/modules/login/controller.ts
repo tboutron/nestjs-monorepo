@@ -9,7 +9,10 @@ import { SwagggerResponse } from './swagger';
 @Controller('login')
 @ApiTags('login')
 export class LoginController {
-  constructor(private readonly loginService: ILoginService, private readonly tokenService: ITokenService) {}
+  constructor(
+    private readonly loginService: ILoginService,
+    private readonly tokenService: ITokenService,
+  ) {}
 
   @Post()
   @HttpCode(200)

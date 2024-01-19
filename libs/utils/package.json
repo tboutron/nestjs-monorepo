@@ -12,14 +12,15 @@
     "lint": "yarn format && ../../tools/eslint/node_modules/.bin/eslint \"**/*.{ts, js, json}\" --fix"
   },
   "engines": {
-    "node": ">=14 <=16"
+    "node": "18"
   },
   "dependencies": {
-    "opentracing": "^0.14.7",
-    "jaeger-client": "^3.19.0"
+    "axios": "^1.6.5",
+    "jaeger-client": "^3.19.0",
+    "opentracing": "^0.14.7"
   },
   "devDependencies": {
-    "@types/jaeger-client": "^3.18.3"
+    "@types/jaeger-client": "^3.18.7"
   },
   "license": "MIT"
 }

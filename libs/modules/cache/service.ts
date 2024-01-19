@@ -11,7 +11,10 @@ import { CacheKeyArgument, CacheKeyValue, CacheValeuArgument } from './types';
 export class RedisService implements ICacheService {
   client: RedisClientType;
 
-  constructor(private readonly config: RedisClientOptions, private readonly logger: ILoggerService) {
+  constructor(
+    private readonly config: RedisClientOptions,
+    private readonly logger: ILoggerService,
+  ) {
     this.client = createClient(this.config) as RedisClientType;
   }
 

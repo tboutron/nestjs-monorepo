@@ -57,10 +57,7 @@ describe('LoginController (e2e)', () => {
 
     it(`should throw "username or password is invalid" error`, async () => {
       model.findOne = jest.fn();
-      return await request(app.getHttpServer())
-        .post('/login')
-        .send({ login: 'mockLogin', pass: 'passMock' })
-        .expect(412);
+      return request(app.getHttpServer()).post('/login').send({ login: 'mockLogin', pass: 'passMock' }).expect(412);
     });
   });
 

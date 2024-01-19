@@ -12,9 +12,7 @@
     "email": "mike.rodrigues.lima@gmail.com"
   },
   "engines": {
-    "node": ">=14 <=16"
+    "node": "18"
   },
-  "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {}
+  "license": "MIT"
 }

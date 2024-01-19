@@ -1,6 +1,15 @@
 import { HttpStatus } from '@nestjs/common';
 import { ApiException } from 'libs/utils';
-import { FilterQuery, Model, QueryOptions, SaveOptions, UpdateQuery, UpdateWithAggregationPipeline } from 'mongoose';
+import mongodb from 'mongodb';
+import {
+  FilterQuery,
+  Model,
+  MongooseQueryOptions,
+  QueryOptions,
+  SaveOptions,
+  UpdateQuery,
+  UpdateWithAggregationPipeline,
+} from 'mongoose';
 import { Document } from 'mongoose';
 
 import { IRepository } from './adapter';
@@ -38,14 +47,14 @@ export class Repository<T extends Document> implements IRepository<T> {
   }
 
   async remove(filter: FilterQuery<T>): Promise<RemovedModel> {
-    const { deletedCount } = await this.model.remove(filter);
+    const { deletedCount } = await this.model.deleteMany(filter);
     return { deletedCount, deleted: !!deletedCount };
   }
 
   async updateOne(
     filter: FilterQuery<T>,
     updated: UpdateWithAggregationPipeline | UpdateQuery<T>,
-    options?: QueryOptions,
+    options?: (mongodb.UpdateOptions & Omit<MongooseQueryOptions<T>, 'lean'>) | null,
   ): Promise<UpdatedModel> {
     return await this.model.updateOne(filter, updated, options);
   }
@@ -53,7 +62,7 @@ export class Repository<T extends Document> implements IRepository<T> {
   async updateMany(
     filter: FilterQuery<T>,
     updated: UpdateWithAggregationPipeline | UpdateQuery<T>,
-    options?: QueryOptions,
+    options?: (mongodb.UpdateOptions & Omit<MongooseQueryOptions<T>, 'lean'>) | null,
   ): Promise<UpdatedModel> {
     return await this.model.updateMany(filter, updated, options);
   }

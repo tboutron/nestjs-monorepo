@@ -6,7 +6,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class IsLoggedMiddleware implements NestMiddleware {
-  constructor(private readonly tokenService: ITokenService, private readonly loggerService: ILoggerService) {}
+  constructor(
+    private readonly tokenService: ITokenService,
+    private readonly loggerService: ILoggerService,
+  ) {}
   async use(request: Request, response: Response, next: NextFunction): Promise<void> {
     const tokenHeader = request.headers.authorization;
 
