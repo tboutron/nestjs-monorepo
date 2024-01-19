@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsPasswordValid } from 'apps/auth-api/src/modules/user/entity';
 import { IsAlphanumeric, IsEmail, IsNotEmpty, Matches } from 'class-validator';
+import { IsPasswordValid } from 'libs/modules/auth/password/validator';
 
 /**
  * Register Payload Class

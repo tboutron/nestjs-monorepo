@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsPasswordValid } from 'libs/modules/auth/password/validator';
 
 /**
  * Login Paylaod Class
@@ -22,5 +23,6 @@ export class LoginPayload {
     required: true,
   })
   @IsNotEmpty()
+  @IsPasswordValid()
   password: string;
 }

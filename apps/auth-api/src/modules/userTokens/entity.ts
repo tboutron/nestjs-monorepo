@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from 'apps/auth-api/src/modules/user/schema';
+import { UserEntity } from 'apps/auth-api/src/modules/user/entity';
 
 import { TokenTypeEnum, UserToken } from './schema';
 
@@ -7,7 +7,7 @@ export class UserTokenEntity implements UserToken {
   id?: string;
 
   @ApiProperty()
-  user: User;
+  user: UserEntity;
 
   createdAt: Date;
   expireAt?: Date;

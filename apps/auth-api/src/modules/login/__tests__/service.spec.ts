@@ -1,11 +1,12 @@
 import { Test } from '@nestjs/testing';
 import { LoginPayload } from 'apps/auth-api/src/modules/login/payload/login.payload';
 import { IUserTokensRepository } from 'apps/auth-api/src/modules/userTokens/adapter';
-import { TokenTypeEnum, UserToken } from 'apps/auth-api/src/modules/userTokens/schema';
+import { TokenTypeEnum } from 'apps/auth-api/src/modules/userTokens/schema';
 
 import { IUserRepository } from '../../user/adapter';
 import { ILoginService } from '../adapter';
 import { LoginService } from '../service';
+import { UserTokenEntity } from 'apps/auth-api/src/modules/userTokens/entity';
 
 describe('LoginService', () => {
   let loginService: ILoginService;
@@ -42,7 +43,7 @@ describe('LoginService', () => {
 
   describe('login', () => {
     const loginPayload: LoginPayload = { email: 'mock@mail.net', password: 'mockPass42Secure' };
-    const userToken: UserToken = {
+    const userToken: UserTokenEntity = {
       user: {
         email: 'mock@email.fake',
         username: 'mockUsername',
@@ -58,7 +59,7 @@ describe('LoginService', () => {
 
     test('should login successfully', async () => {
       userTokenRepository.findOne = jest.fn().mockResolvedValue(userToken);
-      await expect(loginService.login(loginPayload)).resolves.toEqual(userToken.user);
+      await expect(loginService.login(loginPayload)).resolves.toEqual(userToken);
     });
 
     test('should throw "not found login" error', async () => {

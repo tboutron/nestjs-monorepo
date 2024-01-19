@@ -7,6 +7,7 @@ import { ILoginService } from './adapter';
 import { LoginPayload } from './payload/login.payload';
 import { RegisterPayload } from './payload/register.payload';
 import { SwagggerResponse } from './swagger';
+import { UserTokenEntity } from 'apps/auth-api/src/modules/userTokens/entity';
 
 @Controller('auth')
 @ApiTags('login')
@@ -31,7 +32,7 @@ export class LoginController {
   @ApiResponse(SwagggerResponse.login[200])
   @ApiResponse(SwagggerResponse.login[412])
   async login(@Body() payload: LoginPayload): Promise<Token> {
-    const user = await this.loginService.login(payload);
-    return this.tokenService.sign({ userId: user.id });
+    const userToken: UserTokenEntity = await this.loginService.login(payload);
+    return this.tokenService.sign({ userId: userToken.user.id });
   }
 }

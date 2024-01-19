@@ -9,6 +9,7 @@ import { IUserRepository } from '../user/adapter';
 import { UserEntity } from '../user/entity';
 import { IUserTokensRepository } from '../userTokens/adapter';
 import { ILoginService } from './adapter';
+import { UserTokenEntity } from 'apps/auth-api/src/modules/userTokens/entity';
 
 @Injectable()
 export class LoginService implements ILoginService {
@@ -31,8 +32,8 @@ export class LoginService implements ILoginService {
     return createdUser;
   }
 
-  async login(payload: LoginPayload): Promise<UserEntity> {
-    const userToken = await this.userTokenRepository.findOne({
+  async login(payload: LoginPayload): Promise<UserTokenEntity> {
+    const userToken: UserTokenEntity = await this.userTokenRepository.findOne({
       $or: [{ expireAt: undefined }, { expireAt: { $gt: new Date() } }],
       type: TokenTypeEnum.PASSWORD,
       key: payload.email,
@@ -45,6 +46,6 @@ export class LoginService implements ILoginService {
     );
     if (!passwordMatch) throw new ApiException(`username or password is invalid.`, HttpStatus.PRECONDITION_FAILED);
 
-    return userToken.user;
+    return userToken;
   }
 }
