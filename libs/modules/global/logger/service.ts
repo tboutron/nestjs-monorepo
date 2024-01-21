@@ -2,12 +2,12 @@ import { IncomingMessage, ServerResponse } from 'node:http';
 import { Transform } from 'node:stream';
 
 import { Injectable, InternalServerErrorException, Scope } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { gray, green, isColorSupported, red, yellow } from 'colorette';
 import { PinoRequestConverter } from 'convert-pino-request-to-curl';
-import { ApiException } from 'libs/utils';
+import { AppApiException } from 'libs/utils';
 import { DateTime } from 'luxon';
 import { LevelWithSilent, Logger, multistream, pino } from 'pino';
-// import pinoElastic from 'pino-elasticsearch';
 import { HttpLogger, Options, pinoHttp } from 'pino-http';
 import pinoPretty, { PrettyOptions } from 'pino-pretty';
 import { v4 as uuidv4 } from 'uuid';
@@ -80,12 +80,12 @@ export class LoggerService implements ILoggerService {
     const errorResponse = this.getErrorResponse(error);
 
     const response =
-      error?.name === ApiException.name
+      error?.name === AppApiException.name
         ? { statusCode: error['statusCode'], message: error?.message }
         : errorResponse?.value();
 
     const type = {
-      Error: ApiException.name,
+      Error: AppApiException.name,
     }[error?.name];
 
     this.pino.logger.error(
@@ -105,7 +105,7 @@ export class LoggerService implements ILoggerService {
   fatal(error: ErrorType, message?: string, context?: string): void {
     this.pino.logger.fatal(
       {
-        ...(error.getResponse() as object),
+        ...(error instanceof RpcException ? {} : (error.getResponse() as object)),
         context: [context, this.app].find(Boolean),
         type: error.name,
         traceId: this.getTraceId(error),
@@ -209,6 +209,8 @@ export class LoggerService implements ILoggerService {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getErrorResponse(error: ErrorType): any {
+    if (error instanceof RpcException) return;
+
     const isFunction = typeof error?.getResponse === 'function';
     return [
       {
@@ -218,7 +220,7 @@ export class LoggerService implements ILoggerService {
       {
         conditional: isFunction && typeof error.getResponse() === 'string',
         value: () =>
-          new ApiException(
+          new AppApiException(
             error.getResponse(),
             [error.getStatus(), error['status']].find(Boolean),
             error['context'],

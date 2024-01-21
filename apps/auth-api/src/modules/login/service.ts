@@ -8,7 +8,7 @@ import { compare, hash } from 'bcrypt';
 import { async as cryptoRandomStringAsync } from 'crypto-random-string';
 import { User } from 'libs/core/entities';
 import { UsersServiceMessages } from 'libs/core/services-messages';
-import { ApiException } from 'libs/utils';
+import { AppApiException } from 'libs/utils';
 import { firstValueFrom } from 'rxjs';
 
 import { IUserTokensRepository } from '../userTokens/adapter';
@@ -33,8 +33,8 @@ export class LoginService implements ILoginService {
 
       return createdUser;
     } catch (error) {
-      if (error === 'Duplicate key error') {
-        throw new ApiException(`username or email already exists.`, HttpStatus.CONFLICT);
+      if (error.message === 'Duplicate key error') {
+        throw new AppApiException(`username or email already exists.`, HttpStatus.CONFLICT);
       }
       throw error;
     }
@@ -46,13 +46,13 @@ export class LoginService implements ILoginService {
       type: TokenTypeEnum.PASSWORD,
       key: payload.email,
     });
-    if (!userToken) throw new ApiException(`username or password is invalid.`, HttpStatus.PRECONDITION_FAILED);
+    if (!userToken) throw new AppApiException(`username or password is invalid.`, HttpStatus.PRECONDITION_FAILED);
 
     const passwordMatch = await compare(payload.password, userToken.value).then(
       (x) => x,
       () => false,
     );
-    if (!passwordMatch) throw new ApiException(`username or password is invalid.`, HttpStatus.PRECONDITION_FAILED);
+    if (!passwordMatch) throw new AppApiException(`username or password is invalid.`, HttpStatus.PRECONDITION_FAILED);
 
     return this.createRefreshToken(userToken.user, new Date(), userToken);
   }

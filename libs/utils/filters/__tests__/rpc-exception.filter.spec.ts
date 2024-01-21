@@ -3,6 +3,7 @@ import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-hos
 import { RpcException } from '@nestjs/microservices';
 import { Test } from '@nestjs/testing';
 import { ILoggerService } from 'libs/modules/global/logger/adapter';
+import { AppRpcException } from 'libs/utils/exception';
 
 import { RpcExceptionFilter } from '../rpc-exception.filter';
 
@@ -19,7 +20,7 @@ describe('RpcExceptionFilter', () => {
         {
           provide: ILoggerService,
           useValue: {
-            info: jest.fn(),
+            error: jest.fn(),
           },
         },
       ],
@@ -30,7 +31,7 @@ describe('RpcExceptionFilter', () => {
   });
 
   it('should log exception information', () => {
-    const exception = new RpcException(genericErrorName);
+    const exception = new AppRpcException(genericErrorName);
     const host = new ExecutionContextHost([]);
 
     jest.spyOn(host, 'switchToRpc').mockReturnValue({
@@ -39,15 +40,11 @@ describe('RpcExceptionFilter', () => {
 
     filter.catch(exception, host as ArgumentsHost);
 
-    expect(loggerService.info).toHaveBeenCalledWith({
-      message: genericErrorName,
-      context: 'context',
-      obj: exception,
-    });
+    expect(loggerService.error).toHaveBeenCalledWith(exception, exception.message, undefined);
   });
 
   it('should add traceId to exception', () => {
-    const exception = new RpcException(genericErrorName);
+    const exception = new AppRpcException(genericErrorName);
     const host = new ExecutionContextHost([]);
 
     jest.spyOn(host, 'switchToRpc').mockReturnValue({
@@ -71,7 +68,7 @@ describe('RpcExceptionFilter', () => {
 
       filter.catch(exception, host as ArgumentsHost).subscribe({
         error(err) {
-          expect(err).toBe(genericErrorName);
+          expect(err).toStrictEqual(new AppRpcException(exception));
           done();
         },
       });

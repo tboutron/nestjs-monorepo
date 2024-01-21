@@ -1,11 +1,11 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/cats-api/src",
+  "sourceRoot": "apps/teams-api/src",
   "monorepo": true,
   "root": "apps/teams-api",
   "compilerOptions": {
     "webpack": true,
-    "tsConfigPath": "apps/cats-api/tsconfig.json"
+    "tsConfigPath": "apps/teams-api/tsconfig.json"
   },
   "projects": {
     "@app/users-service": {

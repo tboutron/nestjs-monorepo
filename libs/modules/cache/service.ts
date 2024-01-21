@@ -1,6 +1,5 @@
-import { HttpStatus } from '@nestjs/common';
-import { Injectable } from '@nestjs/common';
-import { ApiException } from 'libs/utils/exception';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { AppApiException } from 'libs/utils/exception';
 import { createClient, RedisClientOptions, RedisClientType } from 'redis';
 
 import { ILoggerService } from '../global/logger/adapter';
@@ -74,6 +73,6 @@ export class RedisService implements ICacheService {
   }
 
   private throwException(error: string) {
-    throw new ApiException(error, HttpStatus.INTERNAL_SERVER_ERROR, RedisService.name);
+    throw new AppApiException(error, HttpStatus.INTERNAL_SERVER_ERROR, RedisService.name);
   }
 }

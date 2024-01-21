@@ -1,119 +1,42 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  InternalServerErrorException,
-  NestInterceptor,
-} from '@nestjs/common';
-import axios, { AxiosRequestConfig } from 'axios';
-import { initTracer, JaegerTracer, TracingConfig, TracingOptions } from 'jaeger-client';
-import { ILoggerService } from 'libs/modules/global/logger/adapter';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { TracingType } from 'libs/utils';
-import { FORMAT_HTTP_HEADERS, Span, SpanOptions, Tags } from 'opentracing';
-import { Observable, tap } from 'rxjs';
+import { BasicTracingData, TracingInterceptor } from 'libs/utils/interceptors/logger/tracing.interceptor';
+import { FORMAT_HTTP_HEADERS, Span, Tags } from 'opentracing';
 
 @Injectable()
-export class HttpTracingInterceptor implements NestInterceptor {
-  private tracer: JaegerTracer;
-  private app: string;
-
-  constructor({ app, version }: { app: string; version: string }, logger: ILoggerService) {
-    this.app = app;
-
-    const config: TracingConfig = {
-      serviceName: app,
-      sampler: {
-        type: 'const',
-        param: 1,
-      },
-    };
-
-    const options: TracingOptions = this.getTracingLogger(logger);
-
-    options.tags = {
-      version: version,
-      app: app,
-    };
-
-    this.tracer = initTracer(config, options);
-  }
-
-  intercept(executionContext: ExecutionContext, next: CallHandler): Observable<unknown> {
-    const context = `${executionContext.getClass().name}/${executionContext.getHandler().name}`;
+export class HttpTracingInterceptor extends TracingInterceptor {
+  buildSpan(executionContext: ExecutionContext): Span {
     const request = executionContext.switchToHttp().getRequest();
-    const res = executionContext.switchToHttp().getResponse();
-
     const parent = this.tracer.extract(FORMAT_HTTP_HEADERS, request.headers);
     const parentObject = parent ? { childOf: parent } : {};
-    const span = this.tracer.startSpan(request.headers.host + request.path, parentObject);
-
-    const createJaegerInstance = (): TracingType => {
-      return {
-        span: span,
-        tracer: this.tracer,
-        tags: Tags,
-        axios: (options: AxiosRequestConfig = {}) => {
-          const headers = {};
-          this.tracer.inject(span, FORMAT_HTTP_HEADERS, headers);
-          options.headers = { ...options.headers, ...headers, traceId: request.id };
-
-          return axios.create(options);
-        },
-        log: (eventName, payload) => {
-          span.logEvent(eventName, payload);
-        },
-        setTag: (key, value) => {
-          span.setTag(key, value);
-        },
-        addTags: (object) => {
-          span.addTags(object);
-        },
-        setTracingTag: (key, value) => {
-          span.setTag(key, value);
-        },
-        finish: () => {
-          span.finish();
-        },
-        createSpan: (name, parent: Span) => {
-          const parentObject: SpanOptions = parent ? { childOf: parent } : { childOf: span };
-          return this.tracer.startSpan(name, parentObject);
-        },
-      };
-    };
-
-    request.tracing = createJaegerInstance();
-
-    request.tracing.setTag('ip', request.ip);
-    request.tracing.setTag('app', this.app);
-    request.tracing.setTag(Tags.HTTP_METHOD, request.method);
-    request.tracing.setTag('headers', request.headers);
-    request.tracing.setTag('path', request.path);
-    request.tracing.setTag('body', request.body);
-    request.tracing.setTag('query', request.query);
-    request.tracing.setTag('component', context);
-
-    if (request.id) {
-      request.tracing.setTag('traceId', request.id);
-    }
-
-    return next.handle().pipe(
-      tap(() => {
-        request.tracing.setTag(Tags.HTTP_STATUS_CODE, res.statusCode);
-        request.tracing.finish();
-      }),
-    );
+    return this.tracer.startSpan(request.headers.host + request.path, parentObject);
   }
 
-  private getTracingLogger(logger: ILoggerService): TracingOptions {
+  getTraceId(executionContext: ExecutionContext): string {
+    const request = executionContext.switchToHttp().getRequest();
+    return request.id;
+  }
+
+  getBasicTracingData(executionContext: ExecutionContext): BasicTracingData {
+    const request = executionContext.switchToHttp().getRequest();
     return {
-      logger: {
-        info: (message: string) => {
-          logger.log(message);
-        },
-        error: (message: string) => {
-          logger.error(message as unknown as InternalServerErrorException);
-        },
-      },
+      path: request.path,
+      body: request.body,
     };
+  }
+
+  attachTracing(executionContext: ExecutionContext, tracing: TracingType) {
+    const request = executionContext.switchToHttp().getRequest();
+    request.tracing = tracing;
+    tracing.setTag('ip', request.ip);
+    tracing.setTag(Tags.HTTP_METHOD, request.method);
+    tracing.setTag('headers', request.headers);
+    tracing.setTag('query', request.query);
+  }
+
+  interceptBeforeFinish(executionContext: ExecutionContext, tracing: TracingType) {
+    const res = executionContext.switchToHttp().getResponse();
+
+    tracing.setTag(Tags.HTTP_STATUS_CODE, res.statusCode);
   }
 }

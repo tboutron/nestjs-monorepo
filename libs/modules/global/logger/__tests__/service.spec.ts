@@ -1,6 +1,6 @@
 import { HttpStatus, InternalServerErrorException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { ApiException } from 'libs/utils';
+import { AppApiException } from 'libs/utils';
 import { MockUtils } from 'libs/utils/tests/mock-utils';
 import { pinoHttp } from 'pino-http';
 
@@ -39,7 +39,7 @@ describe('LoggerService', () => {
 
   describe('error', () => {
     test('should log ApiException error', () => {
-      const error = new ApiException('Error', HttpStatus.INTERNAL_SERVER_ERROR);
+      const error = new AppApiException('Error', HttpStatus.INTERNAL_SERVER_ERROR);
 
       loggerService.error(error);
 

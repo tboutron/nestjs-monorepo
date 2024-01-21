@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { ISecretsService } from 'libs/modules/global/secrets/adapter';
-import { ApiException } from 'libs/utils';
+import { AppApiException } from 'libs/utils';
 
 import { ITokenService as ITokenService } from './adapter';
 import { Token } from './types';
@@ -26,7 +26,7 @@ export class TokenService implements ITokenService {
     return new Promise((res, rej) => {
       jwt.verify(token, this.secret.authAPI.jwtToken, (error, decoded) => {
         if (error)
-          rej(new ApiException(error.message, HttpStatus.UNAUTHORIZED, `${TokenService.name}/${this.verify.name}`));
+          rej(new AppApiException(error.message, HttpStatus.UNAUTHORIZED, `${TokenService.name}/${this.verify.name}`));
 
         res(decoded);
       });

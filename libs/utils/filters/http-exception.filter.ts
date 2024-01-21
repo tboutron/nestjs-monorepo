@@ -2,14 +2,14 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from
 import { ILoggerService } from 'libs/modules/global/logger/adapter';
 import { DateTime } from 'luxon';
 
-import { ApiException, ErrorModel } from '../exception';
+import { AppApiException, ErrorModel } from '../exception';
 import * as errorStatus from '../static/htttp-status.json';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   constructor(private readonly loggerService: ILoggerService) {}
 
-  catch(exception: ApiException, host: ArgumentsHost): void {
+  catch(exception: AppApiException, host: ArgumentsHost): void {
     const context = host.switchToHttp();
     const response = context.getResponse();
     const request = context.getRequest<Request>();
@@ -23,7 +23,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     this.loggerService.error(exception, exception.message, exception.context);
 
-    response.status(status).json({
+    const result: ErrorModel = {
       error: {
         code: status,
         traceId: exception.traceId,
@@ -31,6 +31,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         timestamp: DateTime.fromJSDate(new Date()).setZone(process.env.TZ).toFormat('dd/MM/yyyy HH:mm:ss'),
         path: request.url,
       },
-    } as ErrorModel);
+    };
+    response.status(status).json(result);
   }
 }

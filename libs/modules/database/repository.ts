@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import { ApiException } from 'libs/utils';
+import { AppApiException } from 'libs/utils';
 import mongodb from 'mongodb';
 import {
   Document,
@@ -22,7 +22,7 @@ export class Repository<T extends Document> implements IRepository<T> {
 
   async isConnected(): Promise<void> {
     if (this.model.db.readyState !== 1)
-      throw new ApiException(`db ${this.model.db.name} disconnected`, HttpStatus.INTERNAL_SERVER_ERROR, 'Database');
+      throw new AppApiException(`db ${this.model.db.name} disconnected`, HttpStatus.INTERNAL_SERVER_ERROR, 'Database');
   }
 
   async create(document: Partial<T>): Promise<CreatedModel<T>> {

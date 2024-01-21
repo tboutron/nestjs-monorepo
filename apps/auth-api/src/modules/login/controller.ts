@@ -4,7 +4,7 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { ITokenService } from 'libs/modules/auth/token/adapter';
 import { Token } from 'libs/modules/auth/token/types';
-import { ApiException } from 'libs/utils';
+import { AppApiException } from 'libs/utils';
 
 import { UserTokenEntity } from '../userTokens/entity';
 import { ILoginService } from './adapter';
@@ -49,7 +49,7 @@ export class LoginController {
         } else if (value.grant_type === 'refresh_token') {
           transformed = plainToInstance(LoginRefreshTokenPayload, value);
         } else {
-          throw new ApiException(`grant_type is invalid.`, HttpStatus.PRECONDITION_FAILED);
+          throw new AppApiException(`grant_type is invalid.`, HttpStatus.PRECONDITION_FAILED);
         }
 
         const validation = await validate(transformed);

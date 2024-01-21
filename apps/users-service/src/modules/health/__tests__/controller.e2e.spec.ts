@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ILoggerService } from 'libs/modules/global/logger/adapter';
-import { ApiException } from 'libs/utils';
+import { AppApiException } from 'libs/utils';
 import * as request from 'supertest';
 
 import { name, version } from '../../../../package.json';
@@ -43,7 +43,7 @@ describe('HealthController (e2e)', () => {
     });
 
     it(`should getHealth with throw statusCode 500`, async () => {
-      service.getText = jest.fn().mockRejectedValue(new ApiException('Error'));
+      service.getText = jest.fn().mockRejectedValue(new AppApiException('Error'));
       return request(app.getHttpServer()).get('/health').expect({ statusCode: 500, message: 'Error' });
     });
   });
