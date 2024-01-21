@@ -9,6 +9,6 @@ import { UserToken, UserTokenDocument } from './schema';
 @Injectable()
 export class UserTokensRepository extends Repository<UserTokenDocument> implements IUserTokensRepository {
   constructor(@InjectModel(UserToken.name) private readonly entity: Model<UserTokenDocument>) {
-    super(entity);
+    super(entity, []);
   }
 }

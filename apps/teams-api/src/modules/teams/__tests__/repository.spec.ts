@@ -5,7 +5,7 @@ import { ITeamsRepository } from '../adapter';
 import { TeamsRepository } from '../repository';
 import { Team } from '../schema';
 
-describe('TeamRepository', () => {
+describe('TeamsRepository', () => {
   let teamRepository: ITeamsRepository;
 
   beforeEach(async () => {

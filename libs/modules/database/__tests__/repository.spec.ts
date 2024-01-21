@@ -49,10 +49,13 @@ describe('Repository', () => {
   describe('find', () => {
     test('should find successfully', async () => {
       const repository = buildMock(DummyEntity);
-      jest.spyOn(DummyEntity, 'find').mockResolvedValueOnce(true as never);
+      jest.spyOn(DummyEntity, 'find').mockReturnValue({
+        populate: () => ({
+          exec: jest.fn().mockReturnValue(true),
+        }),
+      } as any);
 
       await expect(repository.find({})).resolves.toEqual(true);
-      DummyEntity.db;
     });
   });
 
@@ -74,7 +77,11 @@ describe('Repository', () => {
   describe('findAll', () => {
     test('should findAll successfully', async () => {
       const repository = buildMock(DummyEntity);
-      jest.spyOn(DummyEntity, 'find').mockResolvedValueOnce(true as never);
+      jest.spyOn(DummyEntity, 'find').mockReturnValue({
+        populate: () => ({
+          exec: jest.fn().mockReturnValue(true),
+        }),
+      } as any);
 
       await expect(repository.findAll()).resolves.toEqual(true);
     });
@@ -83,7 +90,11 @@ describe('Repository', () => {
   describe('findById', () => {
     test('should findById successfully', async () => {
       const repository = buildMock(DummyEntity);
-      jest.spyOn(DummyEntity, 'findById').mockResolvedValueOnce(true);
+      jest.spyOn(DummyEntity, 'findById').mockReturnValue({
+        populate: () => ({
+          exec: jest.fn().mockReturnValue(true),
+        }),
+      } as any);
 
       await expect(repository.findById('dummy')).resolves.toEqual(true);
     });
@@ -92,7 +103,11 @@ describe('Repository', () => {
   describe('findOne', () => {
     test('should findOne successfully', async () => {
       const repository = buildMock(DummyEntity);
-      jest.spyOn(DummyEntity, 'findOne').mockResolvedValueOnce(true);
+      jest.spyOn(DummyEntity, 'findOne').mockReturnValue({
+        populate: () => ({
+          exec: jest.fn().mockReturnValue(true),
+        }),
+      } as any);
 
       await expect(repository.findOne({} as unknown)).resolves.toEqual(true);
     });

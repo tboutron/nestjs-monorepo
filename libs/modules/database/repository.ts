@@ -42,7 +42,10 @@ export class Repository<T extends Document> implements IRepository<T> {
   }
 
   async findOne(filter: FilterQuery<T>, options?: QueryOptions): Promise<T> {
-    return this.model.findOne(filter, undefined, options);
+    return (await this.model
+      .findOne(filter, undefined, options)
+      .populate(this.populateOnFind as Array<string>)
+      .exec()) as never as T;
   }
 
   async findAll(): Promise<T[]> {

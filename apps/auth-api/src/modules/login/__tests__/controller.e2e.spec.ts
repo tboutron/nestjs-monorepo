@@ -36,12 +36,21 @@ const getMockUser = (): User => ({
   username: 'mockUsername',
 });
 
-const getMockUserToken = (): UserTokenEntity => ({
+const getMockUserPasswordToken = (): UserTokenEntity => ({
   id: 'mockTokenId',
   createdAt: new Date(),
   type: TokenTypeEnum.PASSWORD,
-  key: 'mock@email.fake',
+  key: mockedEmail,
   value: mockedPasswordHash,
+  user: getMockUser(),
+});
+
+const getMockUserRefreshToken = (): UserTokenEntity => ({
+  id: 'mockTokenId',
+  createdAt: new Date(),
+  type: TokenTypeEnum.REFRESH,
+  key: mockedEmail,
+  value: 'mocked_refresh_token',
   user: getMockUser(),
 });
 
@@ -78,13 +87,17 @@ describe('LoginController (e2e)', () => {
         {
           provide: getModelToken(UserToken.name),
           useValue: {
-            new: jest.fn(getMockUserToken),
-            constructor: jest.fn(getMockUserToken),
+            new: jest.fn(getMockUserPasswordToken),
+            constructor: jest.fn(getMockUserPasswordToken),
             find: jest.fn(),
-            findOne: jest.fn(getMockUserToken),
+            findOne: jest.fn().mockReturnValue({
+              populate: () => ({
+                exec: jest.fn(getMockUserPasswordToken),
+              }),
+            }),
             // findOne: jest.fn(),
             update: jest.fn(),
-            create: jest.fn(getMockUserToken),
+            create: jest.fn(getMockUserRefreshToken),
             remove: jest.fn(),
             exec: jest.fn(),
           },

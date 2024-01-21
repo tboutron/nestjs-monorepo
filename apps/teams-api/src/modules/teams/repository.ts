@@ -9,17 +9,13 @@ import { Team, TeamDocument, TeamSchema } from './schema';
 
 @Injectable()
 export class TeamsRepository extends Repository<TeamDocument> implements ITeamsRepository {
-  constructor(
-    @InjectModel(Team.name) private readonly entity: Model<TeamDocument>,
-    protected populateOnFind: Array<keyof Team> = [],
-  ) {
-    super(entity, populateOnFind);
+  constructor(@InjectModel(Team.name) private readonly entity: Model<TeamDocument>) {
+    super(entity, ['members']);
   }
 }
 
 export const TeamsRepositoryProvider = {
   provide: ITeamsRepository,
-  useFactory: (connection: Connection) =>
-    new TeamsRepository(connection.model<TeamDocument>(Team.name, TeamSchema), ['members']),
+  useFactory: (connection: Connection) => new TeamsRepository(connection.model<TeamDocument>(Team.name, TeamSchema)),
   inject: [getConnectionToken(ConnectionName.TEAM)],
 };

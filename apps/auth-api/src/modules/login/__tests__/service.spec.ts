@@ -34,14 +34,14 @@ describe('LoginService', () => {
     createdAt: new Date(),
     type: TokenTypeEnum.PASSWORD,
     key: user.email,
-    value: '$2b$10$f//0JBdTvqtSB2mXY6fqXO4FQWbmwhIxGDpLxAqQ6Fj4n/jGOIbj2',
+    value: '$2b$10$4K12GkZ.rmzl0MX0DuBhS.T41BtVHrhTJKX2Wg/20CMkFKfWo3kBO',
   };
   const userRefreshToken: UserTokenEntity = {
     user,
     createdAt: new Date(),
     type: TokenTypeEnum.REFRESH,
     key: user.email,
-    value: '$2b$10$f//0JBdTvqtSB2mXY6fqXO4FQWbmwhIxGDpLxAqQ6Fj4n/jGOIbj2',
+    value: '$2b$10$4K12GkZ.rmzl0MX0DuBhS.T41BtVHrhTJKX2Wg/20CMkFKfWo3kBO',
   };
 
   beforeEach(async () => {
@@ -57,7 +57,7 @@ describe('LoginService', () => {
         {
           provide: IUserTokensRepository,
           useValue: {
-            findOne: jest.fn().mockResolvedValue(userPasswordToken),
+            findOne: jest.fn().mockReturnValue(userPasswordToken),
             create: jest.fn().mockResolvedValue({ id: userRefreshToken.id, created: true, doc: userRefreshToken }),
           },
         },

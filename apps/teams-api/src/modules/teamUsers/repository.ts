@@ -9,11 +9,8 @@ import { TeamUser, TeamUserDocument, TeamUserSchema } from './schema';
 
 @Injectable()
 export class TeamUsersRepository extends Repository<TeamUserDocument> implements ITeamUsersRepository {
-  constructor(
-    @InjectModel(TeamUser.name) private readonly entity: Model<TeamUserDocument>,
-    protected populateOnFind: Array<keyof TeamUser> = [],
-  ) {
-    super(entity, populateOnFind);
+  constructor(@InjectModel(TeamUser.name) private readonly entity: Model<TeamUserDocument>) {
+    super(entity, ['team']);
   }
 
   async findByUserAndTeam(userId: string, teamId: string): Promise<TeamUserDocument | undefined> {
@@ -24,6 +21,6 @@ export class TeamUsersRepository extends Repository<TeamUserDocument> implements
 export const TeamUsersRepositoryProvider = {
   provide: ITeamUsersRepository,
   useFactory: (connection: Connection) =>
-    new TeamUsersRepository(connection.model<TeamUserDocument>(TeamUser.name, TeamUserSchema), ['team']),
+    new TeamUsersRepository(connection.model<TeamUserDocument>(TeamUser.name, TeamUserSchema)),
   inject: [getConnectionToken(ConnectionName.TEAM)],
 };
