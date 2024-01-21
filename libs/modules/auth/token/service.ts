@@ -15,7 +15,7 @@ export class TokenService implements ITokenService {
       model,
       this.secret.authAPI.jwtToken,
       options || {
-        expiresIn: 300, // 5 minutes
+        expiresIn: 15 * 60, // 5 minutes
       },
     );
 

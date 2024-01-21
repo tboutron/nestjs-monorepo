@@ -20,15 +20,21 @@ describe('SecretsService', () => {
     });
   });
 
-  describe('mainAPI', () => {
+  describe('usersService', () => {
     test('should get mainAPI secrets successfully', () => {
-      expect(commonSecrets.mainAPI.port).toEqual('3000');
+      expect(commonSecrets.usersService.port).toEqual('3000');
     });
   });
 
   describe('authAPI', () => {
     test('should get authAPI secrets successfully', () => {
       expect(commonSecrets.authAPI.port).toEqual('4000');
+    });
+  });
+
+  describe('teamsAPI', () => {
+    test('should get mainAPI secrets successfully', () => {
+      expect(commonSecrets.teamsAPI.port).toEqual('5000');
     });
   });
 });

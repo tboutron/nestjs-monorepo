@@ -26,7 +26,7 @@ describe('HttpLoggerInterceptor', () => {
     httpLoggerInterceptor = app.get(HttpLoggerInterceptor);
   });
 
-  test('should catch successfully without traceid', async () => {
+  test('should catch successfully without traceId', async () => {
     const mock = jest.createMockFromModule<Observable<unknown>>('rxjs');
     jest.spyOn(mock, 'pipe').mockReturnValue(of(true));
     callHandlerMOck.handle = () => mock;
@@ -45,7 +45,7 @@ describe('HttpLoggerInterceptor', () => {
     expect(result).not.toBeUndefined();
   });
 
-  test('should catch successfully with traceid', async () => {
+  test('should catch successfully with traceId', async () => {
     const mock = jest.createMockFromModule<Observable<unknown>>('rxjs');
     jest.spyOn(mock, 'pipe').mockReturnValue(of(true));
     callHandlerMOck.handle = () => mock;
@@ -54,7 +54,7 @@ describe('HttpLoggerInterceptor', () => {
       getClass: () => ({ name: 'dummy' }),
       getHandler: () => ({ name: 'dummy' }),
       switchToHttp: () => ({
-        getRequest: () => ({ headers: { traceid: 'dummy' } }),
+        getRequest: () => ({ headers: { traceId: 'dummy' } }),
         getResponse: () => ({ headers: {} }),
       }),
     } as unknown as ExecutionContext;

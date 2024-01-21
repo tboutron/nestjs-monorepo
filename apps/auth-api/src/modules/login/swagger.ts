@@ -23,7 +23,7 @@ export const SwagggerResponse = {
       description: msgInvalidCredentials,
     }),
   },
-  login: {
+  token: {
     200: Swagger.defaultResponseJSON({
       status: 200,
       json: { token: '<token>' } as Token,
@@ -31,13 +31,27 @@ export const SwagggerResponse = {
     }),
     412: Swagger.defaultResponseError({
       status: 412,
-      route: 'api/login',
+      route: 'api/token',
       message: msgInvalidCredentials,
       description: msgInvalidCredentials,
     }),
   },
 };
 
-export const SwagggerRequest = {
+export const SwaggerRequest = {
   /** If requesters has a body.  */
+  token: Swagger.defaultRequestJSON({
+    grant_type: 'string',
+  }),
+  tokens: Swagger.defaultsRequestJSON([
+    {
+      grant_type: 'refresh_token',
+      refresh_token: 'string',
+    },
+    {
+      grant_type: 'password',
+      email: 'string',
+      password: 'string',
+    },
+  ]),
 };

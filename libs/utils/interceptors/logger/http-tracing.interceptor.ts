@@ -13,7 +13,7 @@ import { FORMAT_HTTP_HEADERS, Span, SpanOptions, Tags } from 'opentracing';
 import { Observable, tap } from 'rxjs';
 
 @Injectable()
-export class TracingInterceptor implements NestInterceptor {
+export class HttpTracingInterceptor implements NestInterceptor {
   private tracer: JaegerTracer;
   private app: string;
 
@@ -55,7 +55,7 @@ export class TracingInterceptor implements NestInterceptor {
         axios: (options: AxiosRequestConfig = {}) => {
           const headers = {};
           this.tracer.inject(span, FORMAT_HTTP_HEADERS, headers);
-          options.headers = { ...options.headers, ...headers, traceid: request.id };
+          options.headers = { ...options.headers, ...headers, traceId: request.id };
 
           return axios.create(options);
         },

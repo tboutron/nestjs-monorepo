@@ -1,16 +1,48 @@
 import { Test } from '@nestjs/testing';
-import { LoginPayload } from 'apps/auth-api/src/modules/login/payload/login.payload';
+import { LoginPasswordPayload } from 'apps/auth-api/src/modules/login/payload/login.payload';
 import { IUserTokensRepository } from 'apps/auth-api/src/modules/userTokens/adapter';
 import { UserTokenEntity } from 'apps/auth-api/src/modules/userTokens/entity';
 import { TokenTypeEnum } from 'apps/auth-api/src/modules/userTokens/schema';
+import { UsersServiceMessages } from 'libs/core/services-messages';
+import { of } from 'rxjs';
 
-import { IUserRepository } from '../../user/adapter';
 import { ILoginService } from '../adapter';
 import { LoginService } from '../service';
+
+jest.mock('crypto-random-string', () => ({
+  async: jest.fn().mockImplementation(() => Promise.resolve('mocked_random_string')),
+}));
 
 describe('LoginService', () => {
   let loginService: ILoginService;
   let userTokenRepository: IUserTokensRepository;
+
+  const loginPayload: LoginPasswordPayload = {
+    grant_type: 'password',
+    email: 'mock@mail.net',
+    password: 'mockPass42Secure',
+  };
+  const user = {
+    email: 'mock@email.fake',
+    username: 'mockUsername',
+    name: 'mockName',
+    id: 'mockUserId',
+    createdAt: new Date(),
+  };
+  const userPasswordToken: UserTokenEntity = {
+    user,
+    createdAt: new Date(),
+    type: TokenTypeEnum.PASSWORD,
+    key: user.email,
+    value: '$2b$10$f//0JBdTvqtSB2mXY6fqXO4FQWbmwhIxGDpLxAqQ6Fj4n/jGOIbj2',
+  };
+  const userRefreshToken: UserTokenEntity = {
+    user,
+    createdAt: new Date(),
+    type: TokenTypeEnum.REFRESH,
+    key: user.email,
+    value: '$2b$10$f//0JBdTvqtSB2mXY6fqXO4FQWbmwhIxGDpLxAqQ6Fj4n/jGOIbj2',
+  };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -23,15 +55,26 @@ describe('LoginService', () => {
           useClass: LoginService,
         },
         {
-          provide: IUserRepository,
+          provide: IUserTokensRepository,
           useValue: {
-            logged: jest.fn(),
+            findOne: jest.fn().mockResolvedValue(userPasswordToken),
+            create: jest.fn().mockResolvedValue({ id: userRefreshToken.id, created: true, doc: userRefreshToken }),
           },
         },
         {
-          provide: IUserTokensRepository,
+          provide: 'USER_SERVICE',
           useValue: {
-            logged: jest.fn(),
+            send: jest.fn().mockImplementation((pattern) => {
+              if (pattern === UsersServiceMessages.CREATE) {
+                return of({
+                  email: 'mock@email.fake',
+                  username: 'mockUsername',
+                  name: 'mockName',
+                  id: 'mockUserId',
+                  createdAt: new Date(),
+                });
+              }
+            }),
           },
         },
       ],
@@ -41,25 +84,10 @@ describe('LoginService', () => {
     userTokenRepository = app.get(IUserTokensRepository);
   });
 
-  describe('login', () => {
-    const loginPayload: LoginPayload = { email: 'mock@mail.net', password: 'mockPass42Secure' };
-    const userToken: UserTokenEntity = {
-      user: {
-        email: 'mock@email.fake',
-        username: 'mockUsername',
-        name: 'mockName',
-        id: 'mockUserId',
-        createdAt: new Date(),
-      },
-      createdAt: new Date(),
-      type: TokenTypeEnum.PASSWORD,
-      key: 'mock@mail.net',
-      value: '$2b$10$f//0JBdTvqtSB2mXY6fqXO4FQWbmwhIxGDpLxAqQ6Fj4n/jGOIbj2',
-    };
-
+  describe('token', () => {
     test('should login successfully', async () => {
-      userTokenRepository.findOne = jest.fn().mockResolvedValue(userToken);
-      await expect(loginService.login(loginPayload)).resolves.toEqual(userToken);
+      const res = await loginService.login(loginPayload);
+      expect(res).toEqual(userRefreshToken);
     });
 
     test('should throw "not found login" error', async () => {

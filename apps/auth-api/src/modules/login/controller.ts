@@ -1,11 +1,14 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserTokenEntity } from 'apps/auth-api/src/modules/userTokens/entity';
+import { Body, Controller, HttpCode, HttpStatus, Post, ValidationPipe } from '@nestjs/common';
+import { ApiBody, ApiExtraModels, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 import { ITokenService } from 'libs/modules/auth/token/adapter';
 import { Token } from 'libs/modules/auth/token/types';
+import { ApiException } from 'libs/utils';
 
+import { UserTokenEntity } from '../userTokens/entity';
 import { ILoginService } from './adapter';
-import { LoginPayload } from './payload/login.payload';
+import { LoginPasswordPayload, LoginRefreshTokenPayload } from './payload/login.payload';
 import { RegisterPayload } from './payload/register.payload';
 import { SwagggerResponse } from './swagger';
 
@@ -27,11 +30,40 @@ export class LoginController {
     return this.tokenService.sign({ userId: user.id });
   }
 
-  @Post('login')
+  @Post('token')
   @HttpCode(200)
-  @ApiResponse(SwagggerResponse.login[200])
-  @ApiResponse(SwagggerResponse.login[412])
-  async login(@Body() payload: LoginPayload): Promise<Token> {
+  @ApiResponse(SwagggerResponse.token[200])
+  @ApiResponse(SwagggerResponse.token[412])
+  @ApiExtraModels(LoginPasswordPayload, LoginRefreshTokenPayload)
+  @ApiBody({
+    schema: {
+      oneOf: [{ $ref: getSchemaPath(LoginPasswordPayload) }, { $ref: getSchemaPath(LoginRefreshTokenPayload) }],
+    },
+  })
+  async token(
+    @Body({
+      transform: async (value: LoginPasswordPayload | LoginRefreshTokenPayload) => {
+        let transformed: LoginPasswordPayload | LoginRefreshTokenPayload;
+        if (value.grant_type === 'password') {
+          transformed = plainToInstance(LoginPasswordPayload, value);
+        } else if (value.grant_type === 'refresh_token') {
+          transformed = plainToInstance(LoginRefreshTokenPayload, value);
+        } else {
+          throw new ApiException(`grant_type is invalid.`, HttpStatus.PRECONDITION_FAILED);
+        }
+
+        const validation = await validate(transformed);
+        if (validation.length > 0) {
+          const validationPipe = new ValidationPipe({ errorHttpStatusCode: HttpStatus.PRECONDITION_FAILED });
+          const exceptionFactory = validationPipe.createExceptionFactory();
+          throw exceptionFactory(validation);
+        }
+
+        return transformed;
+      },
+    })
+    payload: LoginPasswordPayload | LoginRefreshTokenPayload,
+  ): Promise<Token> {
     const userToken: UserTokenEntity = await this.loginService.login(payload);
     return this.tokenService.sign({ userId: userToken.user.id });
   }

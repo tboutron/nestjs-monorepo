@@ -77,13 +77,20 @@ __metadata:
     "@types/bcrypt": "npm:^5"
     "@types/zxcvbn": "npm:^4"
     bcrypt: "npm:^5.1.1"
+    crypto-random-string: "npm:3.3"
     zxcvbn: "npm:^4.4.2"
   languageName: unknown
   linkType: soft
 
-"@app/cats.api@workspace:apps/cats-api":
+"@app/teams.api@workspace:apps/teams-api":
   version: 0.0.0-use.local
-  resolution: "@app/cats.api@workspace:apps/cats-api"
+  resolution: "@app/teams.api@workspace:apps/teams-api"
+  languageName: unknown
+  linkType: soft
+
+"@app/users.service@workspace:apps/users-service":
+  version: 0.0.0-use.local
+  resolution: "@app/users.service@workspace:apps/users-service"
   languageName: unknown
   linkType: soft
 
@@ -1329,6 +1336,49 @@ __metadata:
     class-validator:
       optional: true
   checksum: 6fc02a27d69239602f901295f3b3fc7a1bea4a0ab926d14b6c81c85d1b37f35ae4eac43f64e393eaae5af2dc481bd16fdd297cc0524d9991eb5659cde4ac707c
+  languageName: node
+  linkType: hard
+
+"@nestjs/microservices@npm:^10.3.0":
+  version: 10.3.0
+  resolution: "@nestjs/microservices@npm:10.3.0"
+  dependencies:
+    iterare: "npm:1.2.1"
+    tslib: "npm:2.6.2"
+  peerDependencies:
+    "@grpc/grpc-js": "*"
+    "@nestjs/common": ^10.0.0
+    "@nestjs/core": ^10.0.0
+    "@nestjs/websockets": ^10.0.0
+    amqp-connection-manager: "*"
+    amqplib: "*"
+    cache-manager: "*"
+    ioredis: "*"
+    kafkajs: "*"
+    mqtt: "*"
+    nats: "*"
+    reflect-metadata: ^0.1.12
+    rxjs: ^7.1.0
+  peerDependenciesMeta:
+    "@grpc/grpc-js":
+      optional: true
+    "@nestjs/websockets":
+      optional: true
+    amqp-connection-manager:
+      optional: true
+    amqplib:
+      optional: true
+    cache-manager:
+      optional: true
+    ioredis:
+      optional: true
+    kafkajs:
+      optional: true
+    mqtt:
+      optional: true
+    nats:
+      optional: true
+  checksum: 56daf466c3f5c70c6fd5fb0a4cd3c3d22dbecf31813747ee2d60bb9afc9a1be4b2c25c4b78754fb310b575995e6f1e342832e32a35b36c36aea4496a0928632b
   languageName: node
   linkType: hard
 
@@ -3649,6 +3699,15 @@ __metadata:
     shebang-command: "npm:^2.0.0"
     which: "npm:^2.0.1"
   checksum: 5738c312387081c98d69c98e105b6327b069197f864a60593245d64c8089c8a0a744e16349281210d56835bb9274130d825a78b2ad6853ca13cfbeffc0c31750
+  languageName: node
+  linkType: hard
+
+"crypto-random-string@npm:3.3":
+  version: 3.3.1
+  resolution: "crypto-random-string@npm:3.3.1"
+  dependencies:
+    type-fest: "npm:^0.8.1"
+  checksum: f0c8d1fdab9e7c4e94e1c2184e4836833c4eabc81feab6b0d4d324f3956ab6fb20a6d05bda72c312369a89d61335569274144a1475a8e32f708f4d4e9f859278
   languageName: node
   linkType: hard
 
@@ -7058,6 +7117,7 @@ __metadata:
     "@nestjs/cli": "npm:^10.3.0"
     "@nestjs/common": "npm:^10.3.0"
     "@nestjs/core": "npm:^10.3.0"
+    "@nestjs/microservices": "npm:^10.3.0"
     "@nestjs/mongoose": "npm:^10.0.2"
     "@nestjs/platform-express": "npm:^10.3.0"
     "@nestjs/schematics": "npm:^10.1.0"

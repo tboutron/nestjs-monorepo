@@ -14,8 +14,8 @@ export class IsLoggedMiddleware implements NestMiddleware {
     const tokenHeader = request.headers.authorization;
 
     if (!tokenHeader) {
-      if (!request.headers?.traceid) {
-        request.headers.traceid = uuidv4();
+      if (!request.headers?.traceId) {
+        request.headers.traceId = uuidv4();
       }
       response.status(412);
       this.loggerService.pino(request, response);
@@ -28,8 +28,8 @@ export class IsLoggedMiddleware implements NestMiddleware {
       const tokenDecoded: { userId?: string } = this.tokenService.decode(token);
       error.user = tokenDecoded?.userId;
 
-      if (!request.headers?.traceid) {
-        request.headers.traceid = uuidv4();
+      if (!request.headers?.traceId) {
+        request.headers.traceId = uuidv4();
       }
 
       this.loggerService.pino(request, response);

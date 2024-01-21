@@ -6,7 +6,7 @@ import { ApiException, ErrorModel } from '../exception';
 import * as errorStatus from '../static/htttp-status.json';
 
 @Catch()
-export class AppExceptionFilter implements ExceptionFilter {
+export class HttpExceptionFilter implements ExceptionFilter {
   constructor(private readonly loggerService: ILoggerService) {}
 
   catch(exception: ApiException, host: ArgumentsHost): void {
@@ -19,14 +19,14 @@ export class AppExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : [exception['status'], HttpStatus.INTERNAL_SERVER_ERROR].find(Boolean);
 
-    exception.traceid = [exception.traceid, request['id']].find(Boolean);
+    exception.traceId = [exception.traceId, request['id']].find(Boolean);
 
     this.loggerService.error(exception, exception.message, exception.context);
 
     response.status(status).json({
       error: {
         code: status,
-        traceid: exception.traceid,
+        traceId: exception.traceId,
         message: [errorStatus[String(status)], exception.message].find(Boolean),
         timestamp: DateTime.fromJSDate(new Date()).setZone(process.env.TZ).toFormat('dd/MM/yyyy HH:mm:ss'),
         path: request.url,

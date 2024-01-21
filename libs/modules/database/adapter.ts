@@ -1,7 +1,7 @@
 import { MongooseModuleOptions } from '@nestjs/mongoose';
 import { FilterQuery, QueryOptions, SaveOptions, UpdateQuery, UpdateWithAggregationPipeline } from 'mongoose';
 
-import { ConnectionModel, CreatedModel, RemovedModel, UpdatedModel } from './types';
+import { ConnectionModel, CreatedModel, RemovedModels, UpdatedModel } from './types';
 
 export abstract class IDataBaseService {
   abstract getDefaultConnection<T = MongooseModuleOptions>(options?: ConnectionModel): T;
@@ -21,7 +21,9 @@ export abstract class IRepository<T> {
     options?: TOptions | null,
   ): Promise<T[]>;
 
-  abstract remove<TQuery = FilterQuery<T>>(filter: TQuery): Promise<RemovedModel>;
+  abstract remove<TQuery = FilterQuery<T>>(filter: TQuery): Promise<RemovedModels>;
+
+  abstract removeById(id: string | number): Promise<boolean>;
 
   abstract findOne<TQuery = FilterQuery<T>, TOptions = QueryOptions<T>>(filter: TQuery, options?: TOptions): Promise<T>;
 
@@ -30,6 +32,8 @@ export abstract class IRepository<T> {
     TUpdate = UpdateQuery<T> | UpdateWithAggregationPipeline,
     TOptions = QueryOptions<T>,
   >(filter: TQuery, updated: TUpdate, options?: TOptions): Promise<UpdatedModel>;
+
+  abstract updateOneById(id: string | number, updateQuery: UpdateQuery<T>, options?: QueryOptions): Promise<T>;
 
   abstract updateMany<
     TQuery = FilterQuery<T>,

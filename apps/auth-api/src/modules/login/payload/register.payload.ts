@@ -11,6 +11,7 @@ export class RegisterPayload {
    */
   @ApiProperty({
     required: true,
+    example: 'user@mail.net',
   })
   @IsEmail()
   @IsNotEmpty()
@@ -21,6 +22,7 @@ export class RegisterPayload {
    */
   @ApiProperty({
     required: true,
+    example: 'WKfJpmIMGRJ2FfVwT5g8^bMC*n1J&7gt',
   })
   @IsNotEmpty()
   @IsPasswordValid()
@@ -31,6 +33,7 @@ export class RegisterPayload {
    */
   @ApiProperty({
     required: true,
+    example: 'exampleUser123',
   })
   @IsAlphanumeric()
   @IsNotEmpty()
@@ -41,6 +44,7 @@ export class RegisterPayload {
    */
   @ApiProperty({
     required: true,
+    example: 'John Doe',
   })
   @Matches(/^[ A-Za-z]+$/)
   @IsNotEmpty()

@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { UserEntity } from 'apps/auth-api/src/modules/user/entity';
-import { User } from 'apps/auth-api/src/modules/user/schema';
+import { User } from 'libs/core/entities';
 import { Document, Model, Types } from 'mongoose';
 
 export type UserTokenDocument = UserToken & Document;
@@ -25,7 +24,7 @@ export enum TokenTypeEnum {
 @Schema()
 export class UserToken {
   @Prop({ type: Types.ObjectId, ref: (Model<User>).name })
-  user: UserEntity;
+  user: User;
 
   @Prop({ default: Date.now() })
   createdAt: Date;

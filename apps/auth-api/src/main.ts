@@ -2,16 +2,16 @@ import { HttpStatus, RequestMethod, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { description, name, version } from 'apps/auth-api/package.json';
 import { bold } from 'colorette';
 import { ILoggerService } from 'libs/modules/global/logger/adapter';
 import { ISecretsService } from 'libs/modules/global/secrets/adapter';
 import { DEFAULT_TAG, SWAGGER_API_ROOT } from 'libs/utils/documentation/constants';
-import { AppExceptionFilter } from 'libs/utils/filters/http-exception.filter';
-import { ExceptionInterceptor } from 'libs/utils/interceptors/exception/http-exception.interceptor';
+import { HttpExceptionFilter } from 'libs/utils/filters/http-exception.filter';
+import { HttpExceptionInterceptor } from 'libs/utils/interceptors/exception/http-exception.interceptor';
 import { HttpLoggerInterceptor } from 'libs/utils/interceptors/logger/http-logger.interceptor';
-import { TracingInterceptor } from 'libs/utils/interceptors/logger/http-tracing.interceptor';
+import { HttpTracingInterceptor } from 'libs/utils/interceptors/logger/http-tracing.interceptor';
 
+import { description, name, version } from '../package.json';
 import { MainModule } from './modules/module';
 
 async function bootstrap() {
@@ -30,16 +30,16 @@ async function bootstrap() {
   const loggerService = app.get(ILoggerService);
 
   loggerService.setApplication(name);
-  app.useGlobalFilters(new AppExceptionFilter(loggerService));
+  app.useGlobalFilters(new HttpExceptionFilter(loggerService));
 
   app.useGlobalInterceptors(
-    new ExceptionInterceptor(),
+    new HttpExceptionInterceptor(),
     new HttpLoggerInterceptor(loggerService),
-    new TracingInterceptor({ app: name, version }, loggerService),
+    new HttpTracingInterceptor({ app: name, version }, loggerService),
   );
 
   const {
-    authAPI: { port: PORT, url },
+    authAPI: { port: PORT, url: URL },
     ENV,
     KIBANA_URL,
     JEAGER_URL,
@@ -69,7 +69,7 @@ async function bootstrap() {
 
   await app.listen(PORT);
 
-  const openApiURL = `${url}/${SWAGGER_API_ROOT}`;
+  const openApiURL = `${URL}/${SWAGGER_API_ROOT}`;
 
   loggerService.log(`🔵 swagger listening at ${bold(openApiURL)}`);
   loggerService.log(`🔵 mongo-express listening at ${bold(MONGO_EXPRESS_URL)}`);

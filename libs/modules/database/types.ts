@@ -16,7 +16,7 @@ export type UpdatedModel = {
   upsertedCount: number;
 };
 
-export type RemovedModel = {
+export type RemovedModels = {
   deletedCount: number;
   deleted: boolean;
 };

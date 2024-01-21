@@ -9,7 +9,7 @@ import { DateTime } from 'luxon';
 import { LevelWithSilent, Logger, multistream, pino } from 'pino';
 // import pinoElastic from 'pino-elasticsearch';
 import { HttpLogger, Options, pinoHttp } from 'pino-http';
-import pinoPretty from 'pino-pretty';
+import pinoPretty, { PrettyOptions } from 'pino-pretty';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ILoggerService } from './adapter';
@@ -93,7 +93,7 @@ export class LoggerService implements ILoggerService {
         ...response,
         context: [context, this.app].find(Boolean),
         type: [type, error?.name].find(Boolean),
-        traceid: this.getTraceId(error),
+        traceId: this.getTraceId(error),
         timestamp: this.getDateFormat(),
         application: this.app,
         stack: error.stack,
@@ -108,7 +108,7 @@ export class LoggerService implements ILoggerService {
         ...(error.getResponse() as object),
         context: [context, this.app].find(Boolean),
         type: error.name,
-        traceid: this.getTraceId(error),
+        traceId: this.getTraceId(error),
         timestamp: this.getDateFormat(),
         application: this.app,
         stack: error.stack,
@@ -117,12 +117,12 @@ export class LoggerService implements ILoggerService {
     );
   }
 
-  private getPinoConfig() {
+  private getPinoConfig(): PrettyOptions {
     return {
       colorize: isColorSupported,
       levelFirst: true,
       ignore: 'pid,hostname',
-      quietReqLogger: true,
+      // quietReqLogger: true,
       messageFormat: (log: unknown, messageKey: string) => {
         const message = log[String(messageKey)];
         if (this.app) {
@@ -150,14 +150,14 @@ export class LoggerService implements ILoggerService {
         return `request ${red(error.name)} with status code: ${res.statusCode} `;
       },
       genReqId: (req: IncomingMessage) => {
-        return req.headers.traceid;
+        return req.headers.traceId;
       },
       customAttributeKeys: {
         req: 'request',
         res: 'response',
         err: 'error',
         responseTime: 'timeTaken',
-        reqId: 'traceid',
+        reqId: 'traceId',
       },
       serializers: {
         err: () => false,
@@ -173,12 +173,12 @@ export class LoggerService implements ILoggerService {
       customProps: (req: any): any => {
         const context = req.context;
 
-        const traceid = [req?.headers?.traceid, req.id].find(Boolean);
+        const traceId = [req?.headers?.traceId, req.id].find(Boolean);
 
         const path = `${req.protocol}://${req.headers.host}${req.url}`;
 
         this.pino.logger.setBindings({
-          traceid,
+          traceId,
           application: this.app,
           context: context,
           path,
@@ -186,7 +186,7 @@ export class LoggerService implements ILoggerService {
         });
 
         return {
-          traceid,
+          traceId,
           application: this.app,
           context: context,
           path,
@@ -241,6 +241,6 @@ export class LoggerService implements ILoggerService {
 
   private getTraceId(error): string {
     if (typeof error === 'string') return uuidv4();
-    return [error.traceid, this.pino.logger.bindings()?.tranceId].find(Boolean);
+    return [error.traceId, this.pino.logger.bindings()?.tranceId].find(Boolean);
   }
 }

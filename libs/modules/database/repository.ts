@@ -12,10 +12,13 @@ import {
 } from 'mongoose';
 
 import { IRepository } from './adapter';
-import { CreatedModel, RemovedModel, UpdatedModel } from './types';
+import { CreatedModel, RemovedModels, UpdatedModel } from './types';
 
 export class Repository<T extends Document> implements IRepository<T> {
-  constructor(protected readonly model: Model<T>) {}
+  constructor(
+    protected readonly model: Model<T>,
+    protected populateOnFind: Array<string> = [],
+  ) {}
 
   async isConnected(): Promise<void> {
     if (this.model.db.readyState !== 1)
@@ -28,24 +31,32 @@ export class Repository<T extends Document> implements IRepository<T> {
   }
 
   async find(filter: FilterQuery<T>, options?: QueryOptions): Promise<T[]> {
-    return await this.model.find(filter, undefined, options);
+    return await this.model.find(filter, undefined, options).populate(this.populateOnFind).exec();
   }
 
   async findById(id: string | number): Promise<T> {
-    return await this.model.findById(id);
+    return (await this.model
+      .findById(id)
+      .populate(this.populateOnFind as Array<string>)
+      .exec()) as never as T;
   }
 
   async findOne(filter: FilterQuery<T>, options?: QueryOptions): Promise<T> {
-    return await this.model.findOne(filter, undefined, options);
+    return this.model.findOne(filter, undefined, options);
   }
 
   async findAll(): Promise<T[]> {
-    return await this.model.find();
+    return this.model.find().populate(this.populateOnFind).exec();
   }
 
-  async remove(filter: FilterQuery<T>): Promise<RemovedModel> {
+  async remove(filter: FilterQuery<T>): Promise<RemovedModels> {
     const { deletedCount } = await this.model.deleteMany(filter);
     return { deletedCount, deleted: !!deletedCount };
+  }
+
+  async removeById(id: string | number): Promise<boolean> {
+    const deleteResult = await this.model.findByIdAndDelete(id);
+    return !!deleteResult;
   }
 
   async updateOne(
@@ -54,6 +65,10 @@ export class Repository<T extends Document> implements IRepository<T> {
     options?: (mongodb.UpdateOptions & Omit<MongooseQueryOptions<T>, 'lean'>) | null,
   ): Promise<UpdatedModel> {
     return await this.model.updateOne(filter, updated, options);
+  }
+
+  async updateOneById(id: string | number, updateQuery: UpdateQuery<T>, options?: QueryOptions): Promise<T> {
+    return await this.model.findByIdAndUpdate(id, updateQuery, options);
   }
 
   async updateMany(

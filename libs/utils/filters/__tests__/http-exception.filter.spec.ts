@@ -3,18 +3,18 @@ import { Test } from '@nestjs/testing';
 import { ILoggerService } from 'libs/modules/global/logger/adapter';
 
 import { ApiException } from '../../exception';
-import { AppExceptionFilter } from '../http-exception.filter';
+import { HttpExceptionFilter } from '../http-exception.filter';
 
 const mock = jest.createMockFromModule<ArgumentsHost>('@nestjs/common');
 
 describe('AppExceptionFilter', () => {
-  let appExceptionFilter: AppExceptionFilter;
+  let appExceptionFilter: HttpExceptionFilter;
 
   beforeEach(async () => {
     jest.clearAllMocks();
     const app = await Test.createTestingModule({
       providers: [
-        AppExceptionFilter,
+        HttpExceptionFilter,
         {
           provide: ILoggerService,
           useValue: {
@@ -34,7 +34,7 @@ describe('AppExceptionFilter', () => {
       }),
     });
 
-    appExceptionFilter = app.get(AppExceptionFilter);
+    appExceptionFilter = app.get(HttpExceptionFilter);
   });
 
   test('should catch successfully', () => {

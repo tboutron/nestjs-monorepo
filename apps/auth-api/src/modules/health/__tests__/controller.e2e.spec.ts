@@ -5,7 +5,6 @@ import { ApiException } from 'libs/utils';
 import * as request from 'supertest';
 
 import { name, version } from '../../../../package.json';
-import { IUserRepository } from '../../user/adapter';
 import { IUserTokensRepository } from '../../userTokens/adapter';
 import { IHealthService } from '../adapter';
 import { HealthController } from '../controller';
@@ -23,7 +22,6 @@ describe('HealthController (e2e)', () => {
           provide: IHealthService,
           useFactory: () =>
             new HealthService(
-              { isConnected: jest.fn() } as unknown as IUserRepository,
               { isConnected: jest.fn() } as unknown as IUserTokensRepository,
               { info: jest.fn() } as unknown as ILoggerService,
             ),

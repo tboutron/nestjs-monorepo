@@ -7,18 +7,8 @@ import { GlobalModule } from 'libs/modules/global/module';
 
 import { HealthModule } from './health/module';
 import { LoginModule } from './login/module';
-import { UserModule } from './user/module';
 
 @Module({
-  imports: [
-    HealthModule,
-    GlobalModule,
-    AuthDatabaseModule,
-    TokenModule,
-    LoginModule,
-    UserModule,
-    UserTokensModule,
-    LoggerModule,
-  ],
+  imports: [HealthModule, GlobalModule, AuthDatabaseModule, TokenModule, LoginModule, UserTokensModule, LoggerModule],
 })
 export class MainModule {}
