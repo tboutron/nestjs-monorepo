@@ -9,8 +9,6 @@ export class RpcExceptionInterceptor implements NestInterceptor {
       catchError((error) => {
         const rpcContext = executionContext.switchToRpc().getContext();
 
-        // this.sanitizeExternalError(error);
-
         if (typeof error === 'object' && !error.traceId) {
           error.traceId = rpcContext.traceId;
         }

@@ -12,7 +12,7 @@ export abstract class ICacheService<T = RedisClientType> {
   abstract get(key: CacheKeyArgument): Promise<unknown>;
   abstract setMulti(redisList: CacheKeyValue[]): Promise<void>;
   abstract pExpire(key: CacheKeyArgument, miliseconds: number): Promise<void>;
-  abstract hGet(key: CacheKeyArgument, field: CacheKeyArgument): Promise<unknown | unknown[]>;
+  abstract hGet(key: CacheKeyArgument, field: CacheKeyArgument): Promise<unknown>;
   abstract hSet(key: CacheKeyArgument, field: CacheKeyArgument, value: CacheValeuArgument): Promise<number>;
-  abstract hGetAll(key: CacheKeyArgument): Promise<unknown | unknown[]>;
+  abstract hGetAll(key: CacheKeyArgument): Promise<unknown>;
 }

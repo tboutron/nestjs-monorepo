@@ -10,7 +10,3 @@ export const SwagggerResponse = {
     }),
   },
 };
-
-export const SwagggerRequest = {
-  /** If requesters has a body.  */
-};

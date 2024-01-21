@@ -81,7 +81,3 @@ export const SwaggerResponse = {
     }),
   },
 };
-
-export class SwagggerRequest {
-  /** If requesters has a body.  */
-}

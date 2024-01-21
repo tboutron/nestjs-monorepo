@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { ITokenService } from 'libs/modules/auth/token/adapter';
+import { ITokenService, JwtBody } from 'libs/modules/auth/token/adapter';
 import { ILoggerService } from 'libs/modules/global/logger/adapter';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -24,9 +24,13 @@ export class IsLoggedMiddleware implements NestMiddleware {
 
     const token = tokenHeader.split(' ')[1];
 
-    const userDecoded: { userId?: string } = await this.tokenService.verify(token).catch((error) => {
-      const tokenDecoded: { userId?: string } = this.tokenService.decode(token);
-      error.user = tokenDecoded?.userId;
+    try {
+      const userDecoded: JwtBody = await this.tokenService.verify(token);
+      request.headers.user = userDecoded?.sub;
+      next();
+    } catch (error) {
+      const tokenDecoded: Partial<JwtBody> = this.tokenService.decode(token);
+      error.user = tokenDecoded?.sub;
 
       if (!request.headers?.traceId) {
         request.headers.traceId = uuidv4();
@@ -34,10 +38,6 @@ export class IsLoggedMiddleware implements NestMiddleware {
 
       this.loggerService.pino(request, response);
       next(error);
-    });
-
-    request.headers.user = userDecoded?.userId;
-
-    next();
+    }
   }
 }

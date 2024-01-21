@@ -6,13 +6,13 @@ import * as htttpStatus from '../static/htttp-status.json';
 type SwaggerError = {
   status: number;
   route: string;
-  message?: string | unknown;
+  message?: string;
   description?: string;
 };
 
 type SwaggerText = {
   status: number;
-  text: string | unknown;
+  text: string;
   description?: string;
 };
 

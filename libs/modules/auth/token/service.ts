@@ -3,7 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import { ISecretsService } from 'libs/modules/global/secrets/adapter';
 import { AppApiException } from 'libs/utils';
 
-import { ITokenService as ITokenService } from './adapter';
+import { ITokenService, JwtBody } from './adapter';
 import { Token } from './types';
 
 @Injectable()
@@ -22,18 +22,18 @@ export class TokenService implements ITokenService {
     return { token };
   }
 
-  async verify(token: string): Promise<jwt.JwtPayload | string> {
+  async verify(token: string): Promise<JwtBody> {
     return new Promise((res, rej) => {
       jwt.verify(token, this.secret.authAPI.jwtToken, (error, decoded) => {
         if (error)
           rej(new AppApiException(error.message, HttpStatus.UNAUTHORIZED, `${TokenService.name}/${this.verify.name}`));
 
-        res(decoded);
+        res(decoded as JwtBody);
       });
     });
   }
 
-  decode(token: string): jwt.JwtPayload | string {
-    return jwt.decode(token);
+  decode(token: string): JwtBody {
+    return jwt.decode(token) as JwtBody;
   }
 }

@@ -60,7 +60,7 @@ export class RedisService implements ICacheService {
     if (!expired) this.throwException(`set expire error key: ${key}`);
   }
 
-  async hGet(key: CacheKeyArgument, field: CacheKeyArgument): Promise<unknown | unknown[]> {
+  async hGet(key: CacheKeyArgument, field: CacheKeyArgument): Promise<unknown> {
     return await this.client.hGet(key, field);
   }
 
@@ -68,7 +68,7 @@ export class RedisService implements ICacheService {
     return await this.client.hSet(key, field, value);
   }
 
-  async hGetAll(key: CacheKeyArgument): Promise<unknown | unknown[]> {
+  async hGetAll(key: CacheKeyArgument): Promise<unknown> {
     return await this.client.hGetAll(key);
   }
 
