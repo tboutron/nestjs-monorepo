@@ -1,5 +1,5 @@
+import { TeamUserEntity } from 'apps/teams-api/src/modules/teamUsers/entity';
 import { CreateTeamDto, UpdateTeamDto } from 'libs/core/dtos';
-import { TeamUser } from 'libs/core/entities';
 import { IRepository } from 'libs/modules';
 
 import { Team, TeamDocument } from './schema';
@@ -13,5 +13,5 @@ export abstract class ITeamsService {
   abstract update(teamId: string, updateDto: UpdateTeamDto): Promise<Team>;
   abstract delete(teamId: string): Promise<boolean>;
 
-  abstract addTeamUser(teamId: string, teamUser: TeamUser): Promise<Team>;
+  abstract addTeamUser(teamId: string, teamUser: TeamUserEntity): Promise<Team>;
 }

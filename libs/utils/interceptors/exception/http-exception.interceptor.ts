@@ -20,7 +20,6 @@ const formatError = (error: any): { message: string; status: number } => {
           message: 'Error',
           status: HttpStatus.INTERNAL_SERVER_ERROR,
         };
-        break;
       }
     }
   }

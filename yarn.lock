@@ -1411,7 +1411,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/schematics@npm:^10.0.1, @nestjs/schematics@npm:^10.1.0":
+"@nestjs/schematics@npm:^10.0.1":
   version: 10.1.0
   resolution: "@nestjs/schematics@npm:10.1.0"
   dependencies:
@@ -7120,7 +7120,6 @@ __metadata:
     "@nestjs/microservices": "npm:^10.3.0"
     "@nestjs/mongoose": "npm:^10.0.2"
     "@nestjs/platform-express": "npm:^10.3.0"
-    "@nestjs/schematics": "npm:^10.1.0"
     "@nestjs/swagger": "npm:^7.2.0"
     "@nestjs/testing": "npm:^10.3.0"
     "@types/express": "npm:^4.17.21"

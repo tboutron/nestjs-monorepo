@@ -1,6 +1,6 @@
 import { SchemaOptions } from '@nestjs/mongoose';
 
-function transform(doc, ret: { _id: unknown }) {
+export function transform(doc, ret: { _id: unknown }) {
   delete ret._id;
 }
 

@@ -23,16 +23,13 @@ export class LoginService implements ILoginService {
 
   async register(payload: RegisterPayload): Promise<User> {
     try {
-      const createdUser = await firstValueFrom(this.userServiceClient.send(UsersServiceMessages.CREATE, payload));
-      if (!createdUser) throw new ApiException(`username or password is invalid.`, HttpStatus.BAD_REQUEST);
-
-      const { created } = await this.userTokenRepository.create({
-        user: createdUser.id,
+      const createdUser = await firstValueFrom<User>(this.userServiceClient.send(UsersServiceMessages.CREATE, payload));
+      await this.userTokenRepository.create({
+        user: createdUser,
         type: TokenTypeEnum.PASSWORD,
         key: payload.email,
         value: await hash(payload.password, 10),
       });
-      if (!created) throw new ApiException(`username or password is invalid.`, HttpStatus.BAD_REQUEST);
 
       return createdUser;
     } catch (error) {

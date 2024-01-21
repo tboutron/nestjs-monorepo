@@ -1,8 +1,7 @@
-import { Body, Controller, HttpStatus, Param } from '@nestjs/common';
+import { Body, Controller, Param } from '@nestjs/common';
 import { MessagePattern, RpcException } from '@nestjs/microservices';
 import { CreateUserDto } from 'libs/core/dtos';
 import { UsersServiceMessages } from 'libs/core/services-messages';
-import { ApiException } from 'libs/utils';
 
 import { IUsersService } from './adapter';
 import { UserEntity } from './entity';
@@ -34,11 +33,9 @@ export class UsersController {
       if (error.code === 11_000) {
         // MongoDB duplicate key error code
         throw new RpcException('Duplicate key error');
-        throw new ApiException(`username or password is invalid.`, HttpStatus.PRECONDITION_FAILED);
       }
       throw error;
     }
-    return this.usersService.create(model);
   }
 
   @MessagePattern(UsersServiceMessages.DELETE)

@@ -5,7 +5,7 @@ import { IRepository } from 'libs/modules';
 import { TeamUser, TeamUserDocument } from './schema';
 
 export abstract class ITeamUsersRepository extends IRepository<TeamUserDocument> {
-  abstract findByUserAndTeam(userId: string, teamId: string): Promise<TeamUserDocument | undefined>;
+  abstract findByUserAndTeam(userId: string, teamId: string): Promise<TeamUser | undefined>;
 }
 
 export abstract class ITeamUsersService {

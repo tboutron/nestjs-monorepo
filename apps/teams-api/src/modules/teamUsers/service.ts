@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ITeamsService } from 'apps/teams-api/src/modules/teams/adapter';
+import { TeamUserEntity } from 'apps/teams-api/src/modules/teamUsers/entity';
 import { CreateTeamUserDto, UpdateTeamUserDto } from 'libs/core/dtos';
 import { User } from 'libs/core/entities';
 import { UsersServiceMessages } from 'libs/core/services-messages';
@@ -36,7 +37,7 @@ export class TeamUsersService implements ITeamUsersService {
     return this.teamUserRepository.findById(teamId);
   }
 
-  async create(createDto: CreateTeamUserDto): Promise<TeamUser> {
+  async create(createDto: CreateTeamUserDto): Promise<TeamUserEntity> {
     const existingTeamUser = await this.teamUserRepository.findByUserAndTeam(
       createDto.user as unknown as string,
       createDto.team as unknown as string,

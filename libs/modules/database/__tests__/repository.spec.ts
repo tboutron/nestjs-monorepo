@@ -53,7 +53,7 @@ describe('Repository', () => {
         populate: () => ({
           exec: jest.fn().mockReturnValue(true),
         }),
-      } as any);
+      } as never);
 
       await expect(repository.find({})).resolves.toEqual(true);
     });
@@ -81,7 +81,7 @@ describe('Repository', () => {
         populate: () => ({
           exec: jest.fn().mockReturnValue(true),
         }),
-      } as any);
+      } as never);
 
       await expect(repository.findAll()).resolves.toEqual(true);
     });
@@ -94,7 +94,7 @@ describe('Repository', () => {
         populate: () => ({
           exec: jest.fn().mockReturnValue(true),
         }),
-      } as any);
+      } as never);
 
       await expect(repository.findById('dummy')).resolves.toEqual(true);
     });
@@ -107,7 +107,7 @@ describe('Repository', () => {
         populate: () => ({
           exec: jest.fn().mockReturnValue(true),
         }),
-      } as any);
+      } as never);
 
       await expect(repository.findOne({} as unknown)).resolves.toEqual(true);
     });
