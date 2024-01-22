@@ -14,6 +14,7 @@ const getFakeTeam = (): TeamEntity => ({
   id: 'mockId',
   name: 'mockName',
   members: [],
+  parent: undefined,
   createdAt: new Date(),
 });
 const getFakeTeamList = (): TeamEntity[] => [
@@ -21,12 +22,14 @@ const getFakeTeamList = (): TeamEntity[] => [
     id: 'mockId1',
     name: 'mockName1',
     members: [],
+    parent: undefined,
     createdAt: new Date(),
   },
   {
     id: 'mockId2',
     name: 'mockName2',
     members: [],
+    parent: undefined,
     createdAt: new Date(),
   },
 ];

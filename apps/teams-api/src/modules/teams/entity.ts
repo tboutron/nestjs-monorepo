@@ -9,5 +9,7 @@ export class TeamEntity implements Team {
 
   members: Array<TeamUser>;
 
+  parent?: Team;
+
   createdAt: Date;
 }

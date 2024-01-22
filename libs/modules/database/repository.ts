@@ -1,7 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
+import { TeamDocument } from 'apps/teams-api/src/modules/teams/schema';
 import { AppApiException } from 'libs/utils';
 import mongodb from 'mongodb';
 import {
+  AnyKeys,
   Document,
   FilterQuery,
   Model,
@@ -25,7 +27,7 @@ export class Repository<T extends Document> implements IRepository<T> {
       throw new AppApiException(`db ${this.model.db.name} disconnected`, HttpStatus.INTERNAL_SERVER_ERROR, 'Database');
   }
 
-  async create(document: Partial<T>): Promise<CreatedModel<T>> {
+  async create<DocContents = AnyKeys<TeamDocument>>(document: DocContents | T): Promise<CreatedModel<T>> {
     const createdEntity = await this.model.create(document);
     return { id: createdEntity.id, created: !!createdEntity.id, doc: createdEntity };
   }
