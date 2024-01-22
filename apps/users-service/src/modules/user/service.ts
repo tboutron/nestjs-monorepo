@@ -20,8 +20,8 @@ export class UsersService implements IUsersService {
     if (searchText) {
       filter.name = { $regex: searchText, $options: 'i' };
     }
-    // eslint-disable-next-line unicorn/no-array-callback-reference
-    return this.userRepository.find(filter);
+    // eslint-disable-next-line unicorn/no-array-callback-reference,unicorn/no-array-method-this-argument
+    return this.userRepository.find(filter, { limit: 5 });
   }
 
   async getById(userId: string): Promise<User> {

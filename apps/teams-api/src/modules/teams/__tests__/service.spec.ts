@@ -48,7 +48,7 @@ describe('TeamsService', () => {
     const updateDto: UpdateTeamDto = { name: 'Test' };
     const result = await teamsService.update('1', updateDto);
     expect(result).toBeUndefined();
-    expect(mockTeamsRepository.updateOneById).toHaveBeenCalledWith('1', updateDto);
+    expect(mockTeamsRepository.updateOneById).toHaveBeenCalledWith('1', updateDto, { new: true });
   });
 
   it('should delete a team', async () => {
@@ -66,6 +66,6 @@ describe('TeamsService', () => {
     const result = await teamsService.addTeamUser('1', teamUser);
     expect(result).toEqual({ ...team, members: [teamUser] });
     expect(mockTeamsRepository.findById).toHaveBeenCalledWith('1');
-    expect(mockTeamsRepository.updateOneById).toHaveBeenCalledWith('1', { members: [teamUser] });
+    expect(mockTeamsRepository.updateOneById).toHaveBeenCalledWith('1', { members: [teamUser] }, { new: true });
   });
 });

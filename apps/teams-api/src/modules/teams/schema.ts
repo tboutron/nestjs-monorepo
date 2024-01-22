@@ -13,6 +13,9 @@ export class Team {
   @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'TeamUser', default: [] })
   members: Array<TeamUser>;
 
+  @Prop({ required: false, type: mongoose.Schema.Types.ObjectId, ref: 'Team' })
+  parent?: Team;
+
   @Prop({ default: Date.now() })
   createdAt: Date;
 }

@@ -3,7 +3,9 @@ import { Swagger } from 'libs/utils/documentation/swagger';
 
 import { TeamEntity } from './entity';
 
-export const SwagggerResponse = {
+const routeNeutral = 'api/teams';
+const routeWithTargetId = 'api/teams/<id>';
+export const SwaggerResponse = {
   list: {
     200: Swagger.defaultResponseJSON({
       json: [{ id: '<id>', name: 'Some team' }] as Array<TeamEntity>,
@@ -12,12 +14,12 @@ export const SwagggerResponse = {
     }),
     401: Swagger.defaultResponseError({
       status: 401,
-      route: 'api/teams',
+      route: routeNeutral,
       description: 'unauthorized',
     }),
     500: Swagger.defaultResponseError({
       status: 500,
-      route: 'api/teams',
+      route: routeNeutral,
       description: 'list unsuccessfully',
     }),
   },
@@ -29,12 +31,12 @@ export const SwagggerResponse = {
     }),
     401: Swagger.defaultResponseError({
       status: 401,
-      route: 'api/teams',
+      route: routeWithTargetId,
       description: 'unauthorized',
     }),
     500: Swagger.defaultResponseError({
       status: 500,
-      route: 'api/teams',
+      route: routeWithTargetId,
       description: 'get unsuccessfully',
     }),
   },
@@ -46,12 +48,12 @@ export const SwagggerResponse = {
     }),
     401: Swagger.defaultResponseError({
       status: 401,
-      route: 'api/teams',
+      route: routeNeutral,
       description: 'unauthorized',
     }),
     500: Swagger.defaultResponseError({
       status: 500,
-      route: 'api/teams',
+      route: routeNeutral,
       description: 'create unsuccessfully',
     }),
   },
@@ -63,13 +65,30 @@ export const SwagggerResponse = {
     }),
     401: Swagger.defaultResponseError({
       status: 401,
-      route: 'api/teams',
+      route: routeWithTargetId,
       description: 'unauthorized',
     }),
     500: Swagger.defaultResponseError({
       status: 500,
-      route: 'api/teams',
+      route: routeWithTargetId,
       description: 'delete unsuccessfully',
+    }),
+  },
+  patch: {
+    200: Swagger.defaultResponseJSON({
+      json: true,
+      status: 200,
+      description: 'patch successfully',
+    }),
+    401: Swagger.defaultResponseError({
+      status: 401,
+      route: routeWithTargetId,
+      description: 'unauthorized',
+    }),
+    500: Swagger.defaultResponseError({
+      status: 500,
+      route: routeWithTargetId,
+      description: 'patch unsuccessfully',
     }),
   },
 };

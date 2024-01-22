@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: ./apps/users-service/Dockerfile
     ports:
-      - "4000:4000"
+      - "3000:3000"
       - "5880:5880"
     volumes:
       - .:/src:cached
@@ -26,7 +26,7 @@ services:
       context: .
       dockerfile: ./apps/teams-api/Dockerfile
     ports:
-      - "3000:3000"
+      - "5000:5000"
       - "5870:5870"
     volumes:
       - .:/src:cached

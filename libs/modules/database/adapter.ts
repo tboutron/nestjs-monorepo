@@ -1,5 +1,6 @@
 import { MongooseModuleOptions } from '@nestjs/mongoose';
-import { FilterQuery, QueryOptions, SaveOptions, UpdateQuery, UpdateWithAggregationPipeline } from 'mongoose';
+import { TeamDocument } from 'apps/teams-api/src/modules/teams/schema';
+import { AnyKeys, FilterQuery, QueryOptions, SaveOptions, UpdateQuery, UpdateWithAggregationPipeline } from 'mongoose';
 
 import { ConnectionModel, CreatedModel, RemovedModels, UpdatedModel } from './types';
 
@@ -10,7 +11,10 @@ export abstract class IDataBaseService {
 export abstract class IRepository<T> {
   abstract isConnected(): Promise<void>;
 
-  abstract create<Save = SaveOptions>(document: Partial<T>, saveOptions?: Save): Promise<CreatedModel<T>>;
+  abstract create<DocContents = AnyKeys<TeamDocument>, Save = SaveOptions>(
+    document: DocContents | T,
+    saveOptions?: Save,
+  ): Promise<CreatedModel<T>>;
 
   abstract findById(id: string | number): Promise<T>;
 

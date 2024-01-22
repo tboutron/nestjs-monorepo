@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { getConnectionToken, InjectModel } from '@nestjs/mongoose';
-import { Repository } from 'libs/modules';
+import { CreatedModel, Repository } from 'libs/modules';
 import { ConnectionName } from 'libs/modules/database/enum';
-import { Connection, Model } from 'mongoose';
+import { AnyKeys, Connection, Model } from 'mongoose';
 
 import { ITeamsRepository } from './adapter';
 import { Team, TeamDocument, TeamSchema } from './schema';
@@ -10,7 +10,14 @@ import { Team, TeamDocument, TeamSchema } from './schema';
 @Injectable()
 export class TeamsRepository extends Repository<TeamDocument> implements ITeamsRepository {
   constructor(@InjectModel(Team.name) private readonly entity: Model<TeamDocument>) {
-    super(entity, ['members']);
+    super(entity, ['members', 'parent']);
+  }
+
+  async create<DocContents = AnyKeys<TeamDocument>>(
+    document: DocContents | TeamDocument,
+  ): Promise<CreatedModel<TeamDocument>> {
+    const createdEntity = await this.model.create(document);
+    return { id: createdEntity.id, created: !!createdEntity.id, doc: createdEntity };
   }
 }
 
