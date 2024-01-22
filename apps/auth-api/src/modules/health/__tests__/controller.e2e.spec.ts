@@ -1,11 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ILoggerService } from 'libs/modules/global/logger/adapter';
-import { ApiException } from 'libs/utils';
+import { AppApiException } from 'libs/utils';
 import * as request from 'supertest';
 
 import { name, version } from '../../../../package.json';
-import { IUserRepository } from '../../user/adapter';
+import { IUserTokensRepository } from '../../userTokens/adapter';
 import { IHealthService } from '../adapter';
 import { HealthController } from '../controller';
 import { HealthService } from '../service';
@@ -22,7 +22,7 @@ describe('HealthController (e2e)', () => {
           provide: IHealthService,
           useFactory: () =>
             new HealthService(
-              { isConnected: jest.fn() } as unknown as IUserRepository,
+              { isConnected: jest.fn() } as unknown as IUserTokensRepository,
               { info: jest.fn() } as unknown as ILoggerService,
             ),
         },
@@ -43,7 +43,7 @@ describe('HealthController (e2e)', () => {
     });
 
     it(`should getHealth with throw statusCode 500`, async () => {
-      service.getText = jest.fn().mockRejectedValue(new ApiException('Error'));
+      service.getText = jest.fn().mockRejectedValue(new AppApiException('Error'));
       return request(app.getHttpServer()).get('/health').expect({ statusCode: 500, message: 'Error' });
     });
   });

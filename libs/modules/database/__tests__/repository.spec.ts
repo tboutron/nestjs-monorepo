@@ -1,50 +1,59 @@
-import { Model } from 'mongoose';
+import { Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Connection, Document, Model, model } from 'mongoose';
 
 import { IRepository } from '../adapter';
 import { Repository } from '../repository';
 import { CreatedModel } from '../types';
 
-class EntityDummy extends Model {}
+type EntityDummyDocument = EntityDummy & Document;
+@Schema()
+class EntityDummy {}
+const EntityDummySchema = SchemaFactory.createForClass(EntityDummy);
 
-const buildMock = (mock: unknown) => {
-  const repository: IRepository<EntityDummy> = new Repository<EntityDummy>(mock as unknown as Model<EntityDummy>);
+const buildMock = (dummyEntityModel: Model<EntityDummyDocument>) => {
+  const repository: IRepository<EntityDummy> = new Repository<EntityDummyDocument>(dummyEntityModel);
   return repository;
 };
 
 describe('Repository', () => {
+  const DummyEntity: Model<EntityDummyDocument> = model<EntityDummyDocument>('EntityDummy', EntityDummySchema);
+
   describe('create', () => {
     test('should create successfully', async () => {
       const created = { id: '<id>' };
 
-      const repository = buildMock(
-        jest.fn(() => ({
-          save: () => created,
-        })),
-      );
+      const repository = buildMock(DummyEntity);
+      jest.spyOn(DummyEntity, 'create').mockResolvedValueOnce(created as never);
 
-      await expect(repository.create({})).resolves.toEqual({ created: true, id: '<id>' } as CreatedModel);
+      await expect(repository.create({})).resolves.toEqual({
+        created: true,
+        id: '<id>',
+        doc: created,
+      });
     });
 
     test.each([undefined, ''])('should create unsuccessfully', async (id) => {
       const notCreated = { id: id, __v: 0 };
 
-      const repository = buildMock(
-        jest.fn(() => ({
-          save: () => notCreated,
-        })),
-      );
+      const repository = buildMock(DummyEntity);
+      jest.spyOn(DummyEntity, 'create').mockResolvedValueOnce(notCreated as never);
+
       await expect(repository.create({})).resolves.toEqual({
         created: false,
         id: id,
-      } as CreatedModel);
+        doc: notCreated,
+      } as CreatedModel<unknown>);
     });
   });
 
   describe('find', () => {
     test('should find successfully', async () => {
-      const repository = buildMock({
-        find: () => true,
-      });
+      const repository = buildMock(DummyEntity);
+      jest.spyOn(DummyEntity, 'find').mockReturnValue({
+        populate: () => ({
+          exec: jest.fn().mockReturnValue(true),
+        }),
+      } as never);
 
       await expect(repository.find({})).resolves.toEqual(true);
     });
@@ -52,27 +61,27 @@ describe('Repository', () => {
 
   describe('isConnected', () => {
     test('should isConnected successfully', async () => {
-      const repository = buildMock({
-        db: { readyState: 1 },
-      });
+      const repository = buildMock(DummyEntity);
+      DummyEntity.db = { readyState: 1 } as Connection;
 
       await expect(repository.isConnected()).resolves.toBeUndefined();
     });
 
     test('should throw disconnected error', async () => {
-      const repository = buildMock({
-        db: { readyState: 0, name: 'mock' },
-      });
-
+      const repository = buildMock(DummyEntity);
+      DummyEntity.db = { readyState: 0, name: 'mock' } as Connection;
       await expect(repository.isConnected()).rejects.toThrow('db mock disconnected');
     });
   });
 
   describe('findAll', () => {
     test('should findAll successfully', async () => {
-      const repository = buildMock({
-        find: () => true,
-      });
+      const repository = buildMock(DummyEntity);
+      jest.spyOn(DummyEntity, 'find').mockReturnValue({
+        populate: () => ({
+          exec: jest.fn().mockReturnValue(true),
+        }),
+      } as never);
 
       await expect(repository.findAll()).resolves.toEqual(true);
     });
@@ -80,9 +89,12 @@ describe('Repository', () => {
 
   describe('findById', () => {
     test('should findById successfully', async () => {
-      const repository = buildMock({
-        findById: () => true,
-      });
+      const repository = buildMock(DummyEntity);
+      jest.spyOn(DummyEntity, 'findById').mockReturnValue({
+        populate: () => ({
+          exec: jest.fn().mockReturnValue(true),
+        }),
+      } as never);
 
       await expect(repository.findById('dummy')).resolves.toEqual(true);
     });
@@ -90,9 +102,12 @@ describe('Repository', () => {
 
   describe('findOne', () => {
     test('should findOne successfully', async () => {
-      const repository = buildMock({
-        findOne: () => true,
-      });
+      const repository = buildMock(DummyEntity);
+      jest.spyOn(DummyEntity, 'findOne').mockReturnValue({
+        populate: () => ({
+          exec: jest.fn().mockReturnValue(true),
+        }),
+      } as never);
 
       await expect(repository.findOne({} as unknown)).resolves.toEqual(true);
     });
@@ -100,21 +115,19 @@ describe('Repository', () => {
 
   describe('remove', () => {
     test('should remove successfully', async () => {
-      const repository = buildMock({
-        deleteMany: () => ({
-          deletedCount: 1,
-        }),
-      });
+      const repository = buildMock(DummyEntity);
+      jest.spyOn(DummyEntity, 'deleteMany').mockResolvedValueOnce({
+        deletedCount: 1,
+      } as never);
 
       await expect(repository.remove({})).resolves.toEqual({ deleted: true, deletedCount: 1 });
     });
 
     test('should remove unsuccessfully', async () => {
-      const repository = buildMock({
-        deleteMany: () => ({
-          deletedCount: 0,
-        }),
-      });
+      const repository = buildMock(DummyEntity);
+      jest.spyOn(DummyEntity, 'deleteMany').mockResolvedValueOnce({
+        deletedCount: 0,
+      } as never);
 
       await expect(repository.remove({})).resolves.toEqual({ deleted: false, deletedCount: 0 });
     });
@@ -122,18 +135,18 @@ describe('Repository', () => {
 
   describe('updateOne', () => {
     test('should update successfully', async () => {
-      const repository = buildMock({
-        updateOne: () => true,
-      });
+      const repository = buildMock(DummyEntity);
+      jest.spyOn(DummyEntity, 'updateOne').mockResolvedValueOnce(true as never);
+
       await expect(repository.updateOne({}, {})).resolves.toEqual(true);
     });
   });
 
   describe('updateMany', () => {
     test('should update successfully', async () => {
-      const repository = buildMock({
-        updateMany: () => true,
-      });
+      const repository = buildMock(DummyEntity);
+      jest.spyOn(DummyEntity, 'updateMany').mockResolvedValueOnce(true as never);
+
       await expect(repository.updateMany({}, {})).resolves.toEqual(true);
     });
   });

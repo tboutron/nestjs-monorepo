@@ -6,13 +6,13 @@ import * as htttpStatus from '../static/htttp-status.json';
 type SwaggerError = {
   status: number;
   route: string;
-  message?: string | unknown;
+  message?: string;
   description?: string;
 };
 
 type SwaggerText = {
   status: number;
-  text: string | unknown;
+  text: string;
   description?: string;
 };
 
@@ -29,7 +29,7 @@ export const Swagger = {
         example: {
           error: {
             code: status,
-            traceid: '<traceid>',
+            traceId: '<traceId>',
             message: [message, htttpStatus[String(status)]].find(Boolean),
             timestamp: '<timestamp>',
             path: route,
@@ -69,10 +69,17 @@ export const Swagger = {
     };
   },
 
-  defaultRequestJSON(json: unknown): ApiResponseOptions {
+  defaultRequestJSON(jsonExample: unknown): ApiResponseOptions {
     return {
       schema: {
-        example: json,
+        example: jsonExample,
+      },
+    };
+  },
+  defaultsRequestJSON(jsonExamples: unknown[]): ApiResponseOptions {
+    return {
+      schema: {
+        examples: jsonExamples,
       },
     };
   },

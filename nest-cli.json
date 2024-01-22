@@ -1,20 +1,20 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/cats-api/src",
+  "sourceRoot": "apps/teams-api/src",
   "monorepo": true,
-  "root": "apps/cats-api",
+  "root": "apps/teams-api",
   "compilerOptions": {
     "webpack": true,
-    "tsConfigPath": "apps/cats-api/tsconfig.json"
+    "tsConfigPath": "apps/teams-api/tsconfig.json"
   },
   "projects": {
-    "@app/cats-api": {
+    "@app/users-service": {
       "type": "application",
-      "root": "apps/cats-api",
+      "root": "apps/users-service",
       "entryFile": "main",
-      "sourceRoot": "apps/cats-api/src",
+      "sourceRoot": "apps/users-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/cats-api/tsconfig.json"
+        "tsConfigPath": "apps/users-service/tsconfig.json"
       }
     },
     "@app/auth-api": {
@@ -24,6 +24,15 @@
       "sourceRoot": "apps/auth-api/src",
       "compilerOptions": {
         "tsConfigPath": "apps/auth-api/tsconfig.json"
+      }
+    },
+    "@app/teams-api": {
+      "type": "application",
+      "root": "apps/teams-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/teams-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/teams-api/tsconfig.json"
       }
     },
     "@tools/eslint": {

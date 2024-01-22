@@ -16,12 +16,13 @@ export type UpdatedModel = {
   upsertedCount: number;
 };
 
-export type RemovedModel = {
+export type RemovedModels = {
   deletedCount: number;
   deleted: boolean;
 };
 
-export type CreatedModel = {
+export type CreatedModel<T> = {
   id: string;
   created: boolean;
+  doc: T;
 };

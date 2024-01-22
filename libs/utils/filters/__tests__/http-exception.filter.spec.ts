@@ -2,19 +2,19 @@ import { ArgumentsHost, HttpStatus } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { ILoggerService } from 'libs/modules/global/logger/adapter';
 
-import { ApiException } from '../../exception';
-import { AppExceptionFilter } from '../http-exception.filter';
+import { AppApiException } from '../../exception';
+import { HttpExceptionFilter } from '../http-exception.filter';
 
 const mock = jest.createMockFromModule<ArgumentsHost>('@nestjs/common');
 
 describe('AppExceptionFilter', () => {
-  let appExceptionFilter: AppExceptionFilter;
+  let appExceptionFilter: HttpExceptionFilter;
 
   beforeEach(async () => {
     jest.clearAllMocks();
     const app = await Test.createTestingModule({
       providers: [
-        AppExceptionFilter,
+        HttpExceptionFilter,
         {
           provide: ILoggerService,
           useValue: {
@@ -34,17 +34,17 @@ describe('AppExceptionFilter', () => {
       }),
     });
 
-    appExceptionFilter = app.get(AppExceptionFilter);
+    appExceptionFilter = app.get(HttpExceptionFilter);
   });
 
   test('should catch successfully', () => {
-    const error = new ApiException('Error', HttpStatus.INTERNAL_SERVER_ERROR);
+    const error = new AppApiException('Error', HttpStatus.INTERNAL_SERVER_ERROR);
 
     appExceptionFilter.catch(error, mock);
   });
 
   test('should catch successfully without code and context', () => {
-    const error = new ApiException('Error');
+    const error = new AppApiException('Error');
 
     error.statusCode = undefined;
     error.context = undefined;
@@ -53,7 +53,7 @@ describe('AppExceptionFilter', () => {
   });
 
   test('should catch successfully with unknown status', () => {
-    const error = new ApiException('Error', 100);
+    const error = new AppApiException('Error', 100);
 
     error.statusCode = undefined;
     error.context = undefined;
@@ -62,7 +62,7 @@ describe('AppExceptionFilter', () => {
   });
 
   test('should catch successfully without error message', () => {
-    const error = jest.createMockFromModule<ApiException>('@nestjs/common');
+    const error = jest.createMockFromModule<AppApiException>('@nestjs/common');
 
     appExceptionFilter.catch(error, mock);
   });

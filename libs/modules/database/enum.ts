@@ -1,5 +1,6 @@
 export enum ConnectionName {
   CATS = 'monorepo_cats',
-  LOG = 'monorepo_logs',
+  USER = 'monorepo_user',
   AUTH = 'monorepo_auth',
+  TEAM = 'monorepo_team',
 }

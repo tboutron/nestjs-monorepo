@@ -3,21 +3,21 @@ import { CallHandler } from '@nestjs/common/interfaces';
 import { Test } from '@nestjs/testing';
 import { Observable, of } from 'rxjs';
 
-import { ExceptionInterceptor } from '../http-exception.interceptor';
+import { HttpExceptionInterceptor } from '../http-exception.interceptor';
 
 describe('ExceptionInterceptor', () => {
   const executionContextMock = jest.createMockFromModule<ExecutionContext>('@nestjs/common');
   const callHandlerMOck = jest.createMockFromModule<CallHandler>('@nestjs/common');
-  let exceptionInterceptor: ExceptionInterceptor;
+  let exceptionInterceptor: HttpExceptionInterceptor;
 
   beforeEach(async () => {
     jest.clearAllMocks();
     const app = await Test.createTestingModule({
       imports: [],
-      providers: [ExceptionInterceptor],
+      providers: [HttpExceptionInterceptor],
     }).compile();
 
-    exceptionInterceptor = app.get(ExceptionInterceptor);
+    exceptionInterceptor = app.get(HttpExceptionInterceptor);
   });
 
   test('should catch successfully', async () => {

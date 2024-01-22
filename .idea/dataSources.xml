@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="monorepo@db" uuid="fd19f11e-dc4a-444c-889f-81df57f8e042">
+    <data-source source="LOCAL" name="Local infra: Docker compose" uuid="fd19f11e-dc4a-444c-889f-81df57f8e042">
       <driver-ref>mongo</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
-      <jdbc-url>mongodb://db:27017/monorepo?serverSelectionTimeoutMS=5000&amp;connectTimeoutMS=10000&amp;authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
+      <jdbc-url>mongodb://localhost:27017/</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />

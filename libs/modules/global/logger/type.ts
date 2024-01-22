@@ -1,5 +1,6 @@
 import { HttpException } from '@nestjs/common';
-import { ApiException } from 'libs/utils';
+import { RpcException } from '@nestjs/microservices';
+import { AppApiException } from 'libs/utils';
 
 export type MessageType = {
   /**
@@ -16,4 +17,4 @@ export type MessageType = {
   obj?: object;
 };
 
-export type ErrorType = HttpException | ApiException;
+export type ErrorType = HttpException | RpcException | AppApiException;

@@ -1,8 +1,9 @@
+import { Config } from 'jest';
 import { pathsToModuleNameMapper } from 'ts-jest';
 
 import { compilerOptions } from './tsconfig.json';
 
-export default {
+const config: Config = {
   collectCoverage: true,
   moduleFileExtensions: ['js', 'json', 'ts'],
   roots: ['apps', 'libs'],
@@ -26,3 +27,5 @@ export default {
   projects: ['<rootDir>/**/jest.config.js'],
   coverageReporters: ['json-summary', 'lcov'],
 };
+
+export default config;

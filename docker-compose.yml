@@ -1,13 +1,13 @@
 version: "2"
 services:
-  cats-api:
-    container_name: monorepo-cats-api
+  users-service:
+    container_name: monorepo-users-service
     build:
       context: .
-      dockerfile: ./apps/cats-api/Dockerfile
+      dockerfile: ./apps/users-service/Dockerfile
     ports:
-      - "3000:3000"
-      - "5870:5870"
+      - "4000:4000"
+      - "5880:5880"
     volumes:
       - .:/src:cached
   auth-api:
@@ -18,5 +18,15 @@ services:
     ports:
       - "4000:4000"
       - "5880:5880"
+    volumes:
+      - .:/src:cached
+  teams-api:
+    container_name: monorepo-teams-api
+    build:
+      context: .
+      dockerfile: ./apps/teams-api/Dockerfile
+    ports:
+      - "3000:3000"
+      - "5870:5870"
     volumes:
       - .:/src:cached

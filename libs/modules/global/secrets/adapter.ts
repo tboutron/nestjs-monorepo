@@ -1,5 +1,3 @@
-import { AuthAPIEnvironment, CatsAPIEnvironment } from './enum';
-
 export abstract class ISecretsService {
   ENV: string;
   REDIS_URL: string;
@@ -20,15 +18,19 @@ export abstract class ISecretsService {
     pass: string;
   };
 
-  mainAPI: {
-    port: CatsAPIEnvironment | number;
-    url: CatsAPIEnvironment | string;
+  usersService: {
+    port: number;
   };
 
   authAPI: {
-    port: AuthAPIEnvironment | number;
-    jwtToken: AuthAPIEnvironment | string;
-    url: AuthAPIEnvironment | string;
+    port: number;
+    jwtToken: string;
+    url: string;
+  };
+
+  teamsAPI: {
+    port: number;
+    url: string;
   };
 
   GITHUB_SCRAP_API: string;

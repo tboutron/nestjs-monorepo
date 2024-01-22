@@ -3,6 +3,7 @@
 
 node "./verify-dependencies.js"
 yarn make-badges
+git add "README.md"
 yarn lint:fix
 
 echo '\nI Know What You Did Last Commit\n'

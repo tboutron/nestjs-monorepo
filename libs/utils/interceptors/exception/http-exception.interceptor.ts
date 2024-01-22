@@ -1,24 +1,48 @@
 import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
 import { ApiRequest } from 'libs/utils/request';
+import { MongoError } from 'mongodb';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const formatError = (error: any): { message: string; status: number } => {
+  if (error instanceof MongoError) {
+    // eslint-disable-next-line sonarjs/no-small-switch
+    switch (error.code) {
+      case 11_000: {
+        return {
+          message: 'Already exists',
+          status: HttpStatus.CONFLICT,
+        };
+      }
+      default: {
+        return {
+          message: 'Error',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+        };
+      }
+    }
+  }
+
+  const isClassValidatorError = [
+    error.status === HttpStatus.PRECONDITION_FAILED,
+    Array.isArray(error?.response?.message),
+  ].every(Boolean);
+  if (isClassValidatorError) {
+    const msg = error?.response?.message.join(', ');
+    error.response.message = msg;
+    return { message: msg, status: error.status };
+  }
+
+  return { message: error.message, status: error.status };
+};
+
 @Injectable()
-export class ExceptionInterceptor implements NestInterceptor {
+export class HttpExceptionInterceptor implements NestInterceptor {
   intercept(executionContext: ExecutionContext, next: CallHandler): Observable<unknown> {
     return next.handle().pipe(
       catchError((error) => {
-        error.status = [error.status, error?.response?.status, 500].find(Boolean);
-
-        const isClassValidatorError = [
-          error.status === HttpStatus.PRECONDITION_FAILED,
-          Array.isArray(error?.response?.message),
-        ].every(Boolean);
-
-        if (isClassValidatorError) {
-          error.message = error?.response?.message.join(', ');
-          error.response.message = error.message;
-        }
+        formatError(error);
 
         const request: ApiRequest = executionContext.switchToHttp().getRequest();
 
@@ -28,8 +52,8 @@ export class ExceptionInterceptor implements NestInterceptor {
 
         this.sanitizeExternalError(error);
 
-        if (typeof error === 'object' && !error.traceid) {
-          error.traceid = headers.traceid;
+        if (typeof error === 'object' && !error.traceId) {
+          error.traceId = headers.traceId;
         }
 
         const context = `${executionContext.getClass().name}/${executionContext.getHandler().name}`;
@@ -38,7 +62,7 @@ export class ExceptionInterceptor implements NestInterceptor {
           request.tracing.setTag(request.tracing.tags.ERROR, true);
           request.tracing.setTag('message', error.message);
           request.tracing.setTag('statusCode', error.status);
-          request.tracing.addTags({ traceId: error.traceid });
+          request.tracing.addTags({ traceId: error.traceId });
           request.tracing.finish();
         }
 
@@ -54,7 +78,7 @@ export class ExceptionInterceptor implements NestInterceptor {
       error['getResponse'] = () => ({ ...error?.response?.data?.error });
       error['getStatus'] = () => [error?.response?.data?.error?.code, error?.status].find(Boolean);
       error.message = [error?.response?.data?.error?.message, error.message].find(Boolean);
-      error.traceid = error?.response?.data?.error?.traceid;
+      error.traceId = error?.response?.data?.error?.traceId;
     }
   }
 }

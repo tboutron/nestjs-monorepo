@@ -25,10 +25,10 @@ describe('TokenService', () => {
 
   describe('verify', () => {
     test('should verify successfully', async () => {
-      const token = tokenService.sign({ id: 1 });
-      const modelToken: { id?: string } = await tokenService.verify(token.token);
-      expect(modelToken).toHaveProperty('id');
-      expect(modelToken.id).toEqual(1);
+      const token = tokenService.sign({ sub: 1 });
+      const modelToken: { sub?: string } = await tokenService.verify(token.token);
+      expect(modelToken).toHaveProperty('sub');
+      expect(modelToken.sub).toEqual(1);
     });
 
     test('should throw malformed token error', async () => {
@@ -50,12 +50,12 @@ describe('TokenService', () => {
 
   describe('sign', () => {
     test('should sign successfully', async () => {
-      const decoded = tokenService.sign({ id: 1 });
+      const decoded = tokenService.sign({ sub: 1 });
       expect(decoded).toHaveProperty('token');
     });
 
     test('should sign successfully with options', async () => {
-      const decoded = tokenService.sign({ id: 1 }, { expiresIn: 300 });
+      const decoded = tokenService.sign({ sub: 1 }, { expiresIn: 300 });
       expect(decoded).toHaveProperty('token');
     });
   });
